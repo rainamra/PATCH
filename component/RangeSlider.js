@@ -2,6 +2,7 @@ import { StyleSheet, View, TextInput, Text } from "react-native";
 import React from "react";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import Animated, { useSharedValue, useAnimatedStyle, useAnimatedGestureHandler, useAnimatedProps, runOnJS } from "react-native-reanimated";
+import { font } from "../styles";
 
 const RangeSlider = ({ sliderWidth, min, max, step, onValueChange, title, enableDesc = false, descText, enableLabel = false, frontLabelText = "", endLabelText = "" }) => {
   const position = useSharedValue(0);
@@ -105,7 +106,7 @@ const RangeSlider = ({ sliderWidth, min, max, step, onValueChange, title, enable
 
   return (
     <View style={styles.container}>
-      <Text style={{ color: "#9C5C2B" }}>{title}</Text>
+      <Text style={[font.brown, font.h6, font.semiBold]}>{title}</Text>
       <View style={[styles.sliderContainer, { width: sliderWidth }]}>
         <View style={[styles.sliderBack, { width: sliderWidth }]} />
         <Animated.View style={[sliderStyle, styles.sliderFront]} />
@@ -130,7 +131,7 @@ const RangeSlider = ({ sliderWidth, min, max, step, onValueChange, title, enable
       </View>
       {enableDesc && (
         <Animated.View>
-          <AnimatedTextInput style={{ color: "#F0AE5E" }} animatedProps={minMaxDescText} editable={false} multiline />
+          <AnimatedTextInput style={[font.primary, font.p, font.medium]} animatedProps={minMaxDescText} editable={false} multiline />
         </Animated.View>
       )}
     </View>

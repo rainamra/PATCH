@@ -10,16 +10,19 @@ import LikeScreen from "../screens/LikeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import SignUpScreen from "../screens/SignUpScreen";
+import MatchedScreen from "../screens/MatchedScreen";
 
 const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
   const { user } = useAuth();
+  // console.log("test", user);
 
   return (
     <Header>
       {user ? (
         <>
+          {/* <Stack.Screen name="Matched" component={MatchedScreen} /> */}
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Chat" component={ChatScreen} />
           <Stack.Screen name="Like" component={LikeScreen} />

@@ -6,6 +6,8 @@ import { Image, ImageBackground, TouchableHighlight, View } from "react-native";
 import LeftDrawerContent from "../component/LeftDrawerContent";
 import RightDrawerContent from "../component/RightDrawerContent";
 import TabNavigator from "../navigation/TabNavigator";
+import HomeScreen from "../screens/HomeScreen";
+import MatchedScreen from "../screens/MatchedScreen";
 
 const LeftDrawer = createDrawerNavigator();
 const RightDrawer = createDrawerNavigator();
@@ -15,7 +17,7 @@ const HeaderLeft = () => {
 
   return (
     <TouchableHighlight style={{ backgroundColor: "#f0ae5e", borderRadius: 50, width: 35, height: 35, overflow: "hidden", alignItems: "center", marginLeft: 20 }} onPress={() => navigation.getParent("LeftDrawer").openDrawer()}>
-      <Image source={require("../assets/default-profile.png")} resizeMode="cover" style={{ width: "100%", height: "100%", position: "absolute", bottom: -5 }}></Image>
+      <Image source={require("../assets/images/default-profile.png")} resizeMode="cover" style={{ width: "100%", height: "100%", position: "absolute", bottom: -5 }}></Image>
     </TouchableHighlight>
   );
 };
@@ -31,6 +33,7 @@ function LeftDrawerScreen() {
       <LeftDrawer.Screen
         name="SwitchProfile"
         component={TabNavigator}
+        // component={MatchedScreen}
         options={{
           headerShown: true,
           headerShadowVisible: false,
@@ -47,7 +50,7 @@ function LeftDrawerScreen() {
 const HeaderTitle = () => {
   return (
     <View style={{ width: 100, height: 40 }}>
-      <ImageBackground resizeMode="contain" source={require("../assets/logo.png")} style={{ width: "100%", height: "100%" }}></ImageBackground>
+      <ImageBackground resizeMode="contain" source={require("../assets/images/logo.png")} style={{ width: "100%", height: "100%" }}></ImageBackground>
     </View>
   );
 };

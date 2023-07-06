@@ -25,10 +25,10 @@ const SignUpScreen = () => {
   const [showConfirmPass, setShowConfirmPass] = React.useState(false);
 
   const togglePass = () => {
-    setShowPass((prev) => !prev);    
+    setShowPass((prev) => !prev);
   };
   const toggleConfirmPass = () => {
-    setShowConfirmPass((prev) => !prev)
+    setShowConfirmPass((prev) => !prev);
   };
 
   return (
@@ -41,7 +41,7 @@ const SignUpScreen = () => {
       ]}
     >
       <View style={{ flexDirection: "column", alignItems: "center", paddingTop: 40 }}>
-        <Image source={require("../assets/logo.png")} resizeMode={"contain"} style={{ width: 220, height: 100 }}></Image>
+        <Image source={require("../assets/images/logo.png")} resizeMode={"contain"} style={{ width: 220, height: 100 }}></Image>
       </View>
       <View style={{ flexDirection: "column", alignItems: "center", paddingTop: 55 }}>
         <Text style={{ color: "#9c5c2b" }}>Let’s fill your information first!</Text>
@@ -81,7 +81,7 @@ const SignUpScreen = () => {
         </TouchableOpacity>
       </View>
       <View style={{ flex: 1 }}>
-        <ImageBackground source={require("../assets/bottom-banner.png")} resizeMode={"cover"} style={{ position: "absolute", bottom: 0, width: "100%", height: "100%", maxHeight: 180 }}></ImageBackground>
+        <ImageBackground source={require("../assets/images/bottom-banner.png")} resizeMode={"cover"} style={{ position: "absolute", bottom: 0, width: "100%", height: "100%", maxHeight: 180 }}></ImageBackground>
       </View>
     </View>
   );

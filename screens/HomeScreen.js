@@ -1,76 +1,13 @@
-import React, { useState } from "react";
-import { Image, ScrollView, StyleSheet, ActivityIndicator, Text, TextInput, View, TouchableWithoutFeedback } from "react-native";
+import { SimpleLineIcons } from "@expo/vector-icons";
+import React from "react";
+import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import Swiper from "react-native-deck-swiper";
 import Carousel from "react-native-reanimated-carousel";
-import { Dimensions } from "react-native";
+import { PET_PROFILES } from "../_mockApis/userPet";
+import { font } from "../styles";
 
 const HomeScreen = () => {
   const PAGE_WIDTH = Dimensions.get("window").width;
-
-  const DUMMY_DATA = [
-    {
-      id: 1,
-      user: { user_id: "uid1", name: "Rainamira Azzahra", profileUrl: require("../assets/rainamira-avatar.jpg") },
-      pet: {
-        pet_id: 1,
-        name: "Sashi",
-        type: "Cat",
-        gender: "Male",
-        breed: "Persian",
-        age: 24,
-        weight: 4.75,
-        characters: ["Active", "Cuddly", "Clingy"],
-        likes: "Play, eat, sleep, repeat",
-        dislikes: "Sensitive to vacuum cleaner and hairdryer sound",
-        bio: "Want to be my play date?",
-        vaccinated: true,
-        colour: ["Grey", "White"],
-        address: "Jl. Pemuda, Taman Berdikari SentosaJl. Pemuda, Taman Berdikari Sentosa",
-        photosUrl: [require("../assets/sashi-1.jpeg"), require("../assets/sashi-2.jpeg"), require("../assets/sashi-3.jpeg")],
-      },
-    },
-    {
-      id: 2,
-      user: { user_id: "uid2", name: "Raisya Natta", profileUrl: require("../assets/raisya-natta-avatar.jpg") },
-      pet: {
-        pet_id: 2,
-        name: "Mishka",
-        type: "Cat",
-        gender: "Female",
-        breed: "Mainecoon",
-        age: 29,
-        weight: 5.8,
-        characters: ["Vocal", "Active", "Clingy"],
-        likes: "I like to play throw and catch all day",
-        dislikes: "Being alone without my human :(",
-        bio: "Want to be compete on play throw and catch?",
-        vaccinated: true,
-        colour: ["White"],
-        address: "Jl. Lauser, Jakarta Selatan Jl. Lauser, Jakarta Selatan Jl. Lauser, Jakarta Selatan Jl. Lauser, Jakarta Selatan Jl. Lauser, Jakarta Selatan Jl. Lauser, Jakarta Selatan",
-        photosUrl: [require("../assets/mishka-1.jpeg"), require("../assets/mishka-2.jpeg"), require("../assets/mishka-3.jpeg")],
-      },
-    },
-    {
-      id: 3,
-      user: { user_id: "uid3", name: "Vincent Alden", profileUrl: require("../assets/vincent-alden-avatar.jpg") },
-      pet: {
-        name: "Cosmo",
-        type: "Dog",
-        gender: "Male",
-        breed: "Shiba Inu",
-        age: 31,
-        weight: 6.75,
-        characters: ["Active", "Smart", "Playful"],
-        likes: "I like my plushies!",
-        dislikes: "Human strangers",
-        bio: "I can be your friend but pls bring your own plushies on a date",
-        vaccinated: true,
-        colour: ["Red", "White"],
-        address: "Jl. Sutan Syahrir, Jakarta Pusat",
-        photosUrl: [require("../assets/cosmo-1.jpeg"), require("../assets/cosmo-2.jpeg"), require("../assets/cosmo-3.jpeg")],
-      },
-    },
-  ];
 
   return (
     <View style={[styles.container]}>
@@ -80,36 +17,39 @@ const HomeScreen = () => {
         cardStyle={{ borderRadius: 20, height: "95%", overflow: "hidden", marginTop: -45 }}
         stackSize={5}
         verticalSwipe={false}
-        cards={DUMMY_DATA}
+        cards={PET_PROFILES}
         renderCard={(card) => (
           <View key={card.id} style={{ backgroundColor: "#fdfaf0", flex: 1 }}>
             <ScrollView scrollIndicatorInsets={{ top: 20, left: 0, bottom: 20, right: 0 }}>
               <TouchableWithoutFeedback>
                 <View style={{ height: "100%", minHeight: 1100, borderTopLeftRadius: 20, borderTopRightRadius: 20, overflow: "hidden" }}>
-                  {/* <View style={{ width: "100%", height: "50%", maxHeight: 550 }}>
-                    <Image source={card.pet.photosUrl[0]} style={{ width: "100%", height: "100%", borderTopLeftRadius: 20, borderTopRightRadius: 20 }}></Image>
-                  </View> */}
-                  <Carousel
-                    loop
-                    width={PAGE_WIDTH}
-                    height={PAGE_WIDTH * 1.25}
-                    data={card.pet.photosUrl}
-                    onSnapToItem={(index) => console.log("current index:", index)}
-                    renderItem={({ index }) => (
-                      <View>
-                        <Image style={{ width: "100%", height: "100%" }} source={card.pet.photosUrl[index]} />
+                  <View>
+                    <Carousel
+                      loop
+                      width={PAGE_WIDTH}
+                      height={PAGE_WIDTH * 1.25}
+                      data={card.pet.photosUrl}
+                      onSnapToItem={(index) => console.log("current index:", index)}
+                      renderItem={({ index }) => (
+                        <View>
+                          <Image style={{ width: "100%", height: "100%" }} source={card.pet.photosUrl[index]} />
+                        </View>
+                      )}
+                    />
+                    <View style={{ position: "absolute", bottom: 20, left: 20 }}>
+                      <Text style={[font.light, font.h2, font.extraBold]}>{card.pet.name}</Text>
+                      <View style={{ flexDirection: "row", marginTop: 5, alignItems: "baseline" }}>
+                        <SimpleLineIcons name="location-pin" size={20} color={font.light.color} />
+                        <Text style={[font.light, font.h6, { marginLeft: 10 }]}>7 km from you</Text>
                       </View>
-                    )}
-                  />
+                    </View>
+                  </View>
                   <View style={{ backgroundColor: "#ffff", paddingBottom: 20, borderBottomLeftRadius: 20, borderBottomRightRadius: 20 }}>
                     <View style={{ flexDirection: "row", paddingTop: 25, paddingHorizontal: 25 }}>
                       <Image style={{ width: 50, height: 50, borderRadius: 50 }} source={card.user.profileUrl}></Image>
-                      <View style={{ marginLeft: 20, justifyContent: "space-between", paddingVertical: 5 }}>
-                        <Text style={{ color: "#9c5c2b" }}>{card.user.name}</Text>
-                        <Text style={{ color: "#f0ae5e" }}>Pet Owner</Text>
-                      </View>
-                      <View style={{ flex: 1, marginLeft: 20, justifyContent: "flex-end", paddingVertical: 5 }}>
-                        <Text style={{ marginLeft: 20, textAlign: "right", color: "#f0ae5e" }}>15 March 2021</Text>
+                      <View style={{ marginLeft: 20, paddingVertical: 5 }}>
+                        <Text style={[font.bold, font.brown, font.h5]}>{card.user.name}</Text>
+                        <Text style={[font.primary, font.bold, font.p]}>15 March 2021</Text>
                       </View>
                     </View>
                     <View style={styles.subtitleWrapper}>
@@ -198,11 +138,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
   },
-  bubbleText: {
-    color: "#f0ae5e",
-  },
-  subtitle: { color: "#9c5c2b", marginBottom: 10 },
-  bubbleSubtitle: { color: "#9c5c2b" },
+  bubbleText: [font.primary, font.p],
+  subtitle: [{ marginBottom: 10 }, font.brown, font.h6, font.bold],
+  bubbleSubtitle: [font.brown, font.h6, font.bold],
   subtitleWrapper: { paddingHorizontal: 25, marginTop: 20 },
 });
 

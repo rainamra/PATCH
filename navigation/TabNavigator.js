@@ -13,7 +13,7 @@ const Tab = createBottomTabNavigator();
 const TabNavigator = () => {
   return (
     <Tab.Navigator screenOptions={{ tabBarShowLabel: false, headerShown: false, tabBarStyle: { backgroundColor: "#e58578" } }}>
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
@@ -23,7 +23,7 @@ const TabNavigator = () => {
             </View>
           ),
         }}
-      ></Tab.Screen>
+      ></Tab.Screen> */}
       <Tab.Screen
         name="Like"
         component={LikeScreen}

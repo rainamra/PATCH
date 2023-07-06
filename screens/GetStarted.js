@@ -21,11 +21,11 @@ const GetStarted = () => {
       ]}
     >
       {/* Image banner goes here */}
-      <ImageBackground resizeMode="cover" source={require("../assets/get-started-banner.png")} style={{ height: 400 }} imageStyle={{ borderBottomRightRadius: 45, borderBottomLeftRadius: 45 }}></ImageBackground>
+      <ImageBackground resizeMode="cover" source={require("../assets/images/get-started-banner.png")} style={{ height: 400 }} imageStyle={{ borderBottomRightRadius: 45, borderBottomLeftRadius: 45 }}></ImageBackground>
       {/* Text input goes here */}
       <View>
         <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 80 }}>
-          <Image source={require("../assets/logo.png")} resizeMode={"contain"} style={{ width: 220, height: 100 }}></Image>
+          <Image source={require("../assets/images/logo.png")} resizeMode={"contain"} style={{ width: 220, height: 100 }}></Image>
         </View>
         <View style={{ flexDirection: "row", justifyContent: "center", paddingHorizontal: 60, marginTop: 10 }}>
           <Text style={{ textAlign: "center", color: "#f0ae5e" }}>Find a new match for your pet, it’s all started with you. Let’s use PATCH to match!</Text>
@@ -37,7 +37,7 @@ const GetStarted = () => {
             <Text style={styles.text}>GET STARTED</Text>
           </View>
           <View style={{ backgroundColor: "#fdfaf0", borderRadius: 50, padding: 10 }}>
-            <Image source={require("../assets/yellow-paw.png")} style={{ width: 30, height: 30 }}></Image>
+            <Image source={require("../assets/images/yellow-paw.png")} style={{ width: 30, height: 30 }}></Image>
           </View>
         </TouchableOpacity>
         <View style={{ flexDirection: "row", marginTop: 20 }}>

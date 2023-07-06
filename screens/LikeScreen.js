@@ -1,10 +1,36 @@
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import React from "react";
+import { PET_PROFILES, USER_PET_PROFILES} from "../_mockApis/userPet";
 
-export default function LikeScreen() {
+const LikeScreen = () => {
   return (
-    <View>
-      <Text>Hi hoe, I'm like screen</Text>
+    <View style={[styles.container]}>
+      <View>
+        <Text>LikeScreen</Text>
+        <View>
+          <Image source={card.user.profileUrl}></Image>
+        </View>
+        <View>
+          <Image source={card.user.profileUrl}></Image>
+        </View>
+        <Text></Text>
+      </View>
+
+      <View>
+        <View>
+          <Image source={card.user.profileUrl}></Image>
+          <Text></Text>
+        </View>
+      </View>
     </View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fdfaf0",
+  },
+});
+
+export default LikeScreen;

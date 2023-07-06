@@ -1,9 +1,9 @@
-import { Ionicons } from "@expo/vector-icons";
 import { DrawerContentScrollView } from "@react-navigation/drawer";
 import React, { useState } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import RangeSlider from "./RangeSlider";
+import { font } from "../styles";
 
 const RightDrawerContent = (props) => {
   const AGE_MIN_DEFAULT = 4;
@@ -27,8 +27,8 @@ const RightDrawerContent = (props) => {
     >
       {drawerWidth && (
         <DrawerContentScrollView {...props}>
-          <View style={{ paddingLeft: 20, flexDirection: "row", marginBottom: 10, alignItems: "center", height: 32 }}>
-            <Text style={{ color: "#728DF6" }}>Filters</Text>
+          <View style={styles.titleWrapper}>
+            <Text style={[font.purple, font.h5, font.bold]}>Filters</Text>
           </View>
           <GestureHandlerRootView>
             <View style={styles.contentContainer}>
@@ -73,7 +73,6 @@ export default RightDrawerContent;
 const styles = StyleSheet.create({
   contentContainer: {
     marginBottom: 20,
-    // backgroundColor: "blue",
   },
   content: {
     paddingHorizontal: 16,
@@ -97,4 +96,5 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   colorBlack: { color: "black" },
+  titleWrapper: { paddingLeft: 20, flexDirection: "row", marginBottom: 10, alignItems: "center", height: 32 },
 });
