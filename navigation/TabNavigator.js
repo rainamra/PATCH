@@ -7,13 +7,25 @@ import ForumScreen from "../screens/ForumScreen";
 import HomeScreen from "../screens/HomeScreen";
 import LikeScreen from "../screens/LikeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import EditProfileScreen from "../screens/EditProfileScreen";
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
   return (
     <Tab.Navigator screenOptions={{ tabBarShowLabel: false, headerShown: false, tabBarStyle: { backgroundColor: "#e58578" } }}>
-      {/* <Tab.Screen
+      <Tab.Screen
+        name="Profile"
+        component={EditProfileScreen}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <View style={focused ? styles.iconFocus : null}>
+              <Ionicons name="person" size={24} color="#fdfaf0" />
+            </View>
+          ),
+        }}
+      ></Tab.Screen>
+      <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
@@ -23,7 +35,7 @@ const TabNavigator = () => {
             </View>
           ),
         }}
-      ></Tab.Screen> */}
+      ></Tab.Screen>
       <Tab.Screen
         name="Like"
         component={LikeScreen}
@@ -57,7 +69,7 @@ const TabNavigator = () => {
           ),
         }}
       ></Tab.Screen>
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Profile"
         component={ProfileScreen}
         options={{
@@ -67,7 +79,7 @@ const TabNavigator = () => {
             </View>
           ),
         }}
-      ></Tab.Screen>
+      ></Tab.Screen> */}
     </Tab.Navigator>
   );
 };

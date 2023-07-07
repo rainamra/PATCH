@@ -13,7 +13,7 @@ const HomeScreen = () => {
     <View style={[styles.container]}>
       {/* Cards goes here */}
       <Swiper
-        containerStyle={{ backgroundColor: "transparent", height: "100%", position: "relative" }}
+        containerStyle={{ backgroundColor: "transparent", height: "100%", position: "relative", paddingBottom: 10 }}
         cardStyle={{ borderRadius: 20, height: "95%", overflow: "hidden", marginTop: -45 }}
         stackSize={5}
         verticalSwipe={false}
@@ -27,7 +27,7 @@ const HomeScreen = () => {
                     <Carousel
                       loop
                       width={PAGE_WIDTH}
-                      height={PAGE_WIDTH * 1.25}
+                      height={PAGE_WIDTH * 1.20}
                       data={card.pet.photosUrl}
                       onSnapToItem={(index) => console.log("current index:", index)}
                       renderItem={({ index }) => (
