@@ -1,12 +1,26 @@
-import { View, Text, StyleSheet, Image, ScrollView, TouchableHighlight } from "react-native";
-import React, { useState } from "react";
-import { LIKE_PET_PROFILES, USER_PET_PROFILES } from "../_mockApis/userPet";
-import { font } from "../styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React, { useState, useLayoutEffect } from "react";
+import { Image, ScrollView, StyleSheet, Text, TouchableHighlight, View } from "react-native";
+import { USER_PET_PROFILES } from "../_mockApis/userPet";
+import { font } from "../styles";
+import { useNavigation } from "@react-navigation/native";
 
 function ProfileScreen() {
   const [scrollHeight, setScrollHeight] = useState(false);
-  // <MaterialCommunityIcons name="pencil" size={24} color="black" />
+  const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+      //   headerShown: true,
+      headerTitle: "",
+      headerShadowVisible: false,
+      headerStyle: { backgroundColor: "#fdfaf0" },
+      // headerLeft: (props) => <AntDesign name="leftcircle" size={30} color="#f0ae5e" onPress={navigation.goBack} {...props} />,
+    });
+  }, []);
+
+  // console.log("data: ", USER_PET_PROFILES.pets[0]);
 
   return (
     <View style={[styles.container]}>
@@ -33,7 +47,13 @@ function ProfileScreen() {
         <View style={styles.cardWrapper}>
           {USER_PET_PROFILES.pets.length > 0 &&
             USER_PET_PROFILES.pets.map((pet, index) => (
-              <TouchableHighlight key={index} style={[styles.card, { height: (scrollHeight - 70) / 2 }]}>
+              <TouchableHighlight
+                key={index}
+                style={[styles.card, { height: (scrollHeight - 70) / 2 }]}
+                onPress={() => {
+                  navigation.navigate("EditPet", { data: USER_PET_PROFILES.pets[index] });
+                }}
+              >
                 <View>
                   <Image source={pet.photosUrl[0]} resizeMode={"cover"} style={styles.image}></Image>
                   <Text style={styles.petName}>{pet.name}</Text>

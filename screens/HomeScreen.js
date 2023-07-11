@@ -80,7 +80,7 @@ const HomeScreen = () => {
                     <View style={styles.subtitleWrapper}>
                       <Text style={styles.bubbleSubtitle}>Pet Character</Text>
                       <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                        {card.pet.characters.map((char, index) => (
+                        {card.pet.character.map((char, index) => (
                           <View style={styles.bubble} key={index}>
                             <Text style={styles.bubbleText}>{char}</Text>
                           </View>

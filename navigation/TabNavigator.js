@@ -7,24 +7,17 @@ import ForumScreen from "../screens/ForumScreen";
 import HomeScreen from "../screens/HomeScreen";
 import LikeScreen from "../screens/LikeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
-import EditProfileScreen from "../screens/EditProfileScreen";
-
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import EditPetScreen from "../screens/EditPetScreen";
+import PetFormScreen from "../screens/PetFormScreen";
+import ImageUpload from "../component/ImageUpload";
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
+  const ProfileStack = createNativeStackNavigator();
+
   return (
     <Tab.Navigator screenOptions={{ tabBarShowLabel: false, headerShown: false, tabBarStyle: { backgroundColor: "#e58578" } }}>
-      <Tab.Screen
-        name="Profile"
-        component={EditProfileScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <View style={focused ? styles.iconFocus : null}>
-              <Ionicons name="person" size={24} color="#fdfaf0" />
-            </View>
-          ),
-        }}
-      ></Tab.Screen>
       <Tab.Screen
         name="Home"
         component={HomeScreen}
@@ -69,9 +62,9 @@ const TabNavigator = () => {
           ),
         }}
       ></Tab.Screen>
-      {/* <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
+      <Tab.Screen
+        name="User"
+        // component={ProfileScreen}
         options={{
           tabBarIcon: ({ color, focused }) => (
             <View style={focused ? styles.iconFocus : null}>
@@ -79,7 +72,16 @@ const TabNavigator = () => {
             </View>
           ),
         }}
-      ></Tab.Screen> */}
+      >
+        {() => (
+          <ProfileStack.Navigator>
+            <ProfileStack.Screen name="Profile" component={ProfileScreen} />
+            <ProfileStack.Screen name="EditPet" component={EditPetScreen} />
+            <ProfileStack.Screen name="ImageUpload" component={ImageUpload} />
+            <ProfileStack.Screen name="PetForm" component={PetFormScreen} />
+          </ProfileStack.Navigator>
+        )}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 };

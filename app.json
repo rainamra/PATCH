@@ -28,6 +28,15 @@
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Select and upload images.",
+          "cameraPermission": "Allow PATCH to access your camera"
+        }
+      ]
+    ]
   }
 }

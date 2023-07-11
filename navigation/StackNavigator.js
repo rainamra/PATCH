@@ -11,6 +11,7 @@ import LoginScreen from "../screens/LoginScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import SignUpScreen from "../screens/SignUpScreen";
 import MatchedScreen from "../screens/MatchedScreen";
+import EditPetScreen from "../screens/EditPetScreen";
 
 const Stack = createNativeStackNavigator();
 
