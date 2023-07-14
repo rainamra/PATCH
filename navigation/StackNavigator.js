@@ -1,34 +1,32 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
-import Header from "../component/Header";
+import { petProfileHeader, userProfileHeader } from "../component/HeaderComponent";
 import useAuth from "../hooks/useAuth";
-import ChatScreen from "../screens/ChatScreen";
-import ForumScreen from "../screens/ForumScreen";
+import EditPetScreen from "../screens/EditPetScreen";
 import GetStarted from "../screens/GetStarted";
-import HomeScreen from "../screens/HomeScreen";
-import LikeScreen from "../screens/LikeScreen";
 import LoginScreen from "../screens/LoginScreen";
+import PetFormScreen from "../screens/PetFormScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import SignUpScreen from "../screens/SignUpScreen";
-import MatchedScreen from "../screens/MatchedScreen";
-import EditPetScreen from "../screens/EditPetScreen";
+import TabNavigator from "./TabNavigator";
+import MessageScreen from "../screens/MessageScreen";
 
 const Stack = createNativeStackNavigator();
+const HomeStack = createNativeStackNavigator();
 
 const StackNavigator = () => {
   const { user } = useAuth();
-  // console.log("test", user);
 
   return (
-    <Header>
+    // <Header>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       {user ? (
         <>
-          {/* <Stack.Screen name="Matched" component={MatchedScreen} /> */}
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Chat" component={ChatScreen} />
-          <Stack.Screen name="Like" component={LikeScreen} />
-          <Stack.Screen name="Profile" component={ProfileScreen} />
-          <Stack.Screen name="Forum" component={ForumScreen} />
+          <Stack.Screen name="HomeTabs" component={TabNavigator} />
+          <Stack.Screen name="ProfileNoTab" component={ProfileScreen} options={userProfileHeader} />
+          <Stack.Screen name="EditPet" component={EditPetScreen} options={petProfileHeader} />
+          <Stack.Screen name="PetForm" component={PetFormScreen} options={petProfileHeader} />
+          <Stack.Screen name="Message" component={MessageScreen} />
         </>
       ) : (
         <>
@@ -37,7 +35,8 @@ const StackNavigator = () => {
           <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
         </>
       )}
-    </Header>
+    </Stack.Navigator>
+    // </Header>
   );
 };
 export default StackNavigator;

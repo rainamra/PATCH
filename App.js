@@ -1,11 +1,12 @@
+import { Nunito_500Medium, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold, Nunito_900Black, useFonts } from "@expo-google-fonts/nunito";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { NavigationContainer } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
+import React, { useCallback, useEffect } from "react";
+import { StatusBar } from "react-native";
 import "react-native-gesture-handler";
 import { AuthProvider } from "./hooks/useAuth";
 import StackNavigator from "./navigation/StackNavigator";
-import { StatusBar } from "react-native";
-import { useFonts, Nunito_500Medium, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold, Nunito_900Black } from "@expo-google-fonts/nunito";
-import React, { useCallback, useEffect } from "react";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -45,7 +46,11 @@ export default function App() {
   return (
     <NavigationContainer onReady={onLayoutRootView}>
       <AuthProvider>
-        <StackNavigator />
+        <BottomSheetModalProvider>
+          <BottomSheetModalProvider>
+            <StackNavigator />
+          </BottomSheetModalProvider>
+        </BottomSheetModalProvider>
       </AuthProvider>
     </NavigationContainer>
   );

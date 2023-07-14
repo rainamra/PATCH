@@ -1,25 +1,14 @@
-import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { useLayoutEffect, useState } from "react";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React, { useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, TouchableHighlight, View } from "react-native";
+import AnimatedDotsCarousel from "react-native-animated-dots-carousel";
 import Carousel from "react-native-reanimated-carousel";
 import { font } from "../styles";
-import AnimatedDotsCarousel from "react-native-animated-dots-carousel";
 
 const EditPetScreen = ({ route, navigation }) => {
   const [viewWidth, setViewWidth] = useState(false);
-  const { data } = route.params;
+  const { data, prevPage } = route.params;
   const [index, setIndex] = useState(0);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      // headerShown: false,
-      headerShown: true,
-      headerTitle: "",
-      headerShadowVisible: false,
-      headerStyle: { backgroundColor: "#fdfaf0" },
-      headerLeft: (props) => <AntDesign name="leftcircle" size={30} color="#f0ae5e" onPress={navigation.goBack} {...props} />,
-    });
-  }, []);
 
   const handleIndex = (index) => {
     setIndex(index);
@@ -38,13 +27,15 @@ const EditPetScreen = ({ route, navigation }) => {
           <View style={{ marginVertical: 20 }}>
             <View style={styles.titleWrapper}>
               <Text style={[font.h1, font.bold, font.brown]}>{data?.name}</Text>
-              <TouchableHighlight
-                onPress={() => {
-                  navigation.navigate("PetForm", { data });
-                }}
-              >
-                <MaterialCommunityIcons name="pencil" size={26} color={font.pink.color} />
-              </TouchableHighlight>
+              {prevPage !== "Message" && (
+                <TouchableHighlight
+                  onPress={() => {
+                    navigation.navigate("PetForm", { data });
+                  }}
+                >
+                  <MaterialCommunityIcons name="pencil" size={26} color={font.pink.color} />
+                </TouchableHighlight>
+              )}
             </View>
 
             {viewWidth && (
@@ -166,6 +157,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "column",
+    marginTop: -45,
   },
   cardWrapper: {
     // paddingHorizontal: 20,

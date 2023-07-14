@@ -1,26 +1,26 @@
 import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import { StyleSheet, View } from "react-native";
+import { homeHeader, petProfileHeader, switchOnlyHeader } from "../component/HeaderComponent";
 import ChatScreen from "../screens/ChatScreen";
 import ForumScreen from "../screens/ForumScreen";
 import HomeScreen from "../screens/HomeScreen";
 import LikeScreen from "../screens/LikeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import EditPetScreen from "../screens/EditPetScreen";
-import PetFormScreen from "../screens/PetFormScreen";
-import ImageUpload from "../component/ImageUpload";
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
   const ProfileStack = createNativeStackNavigator();
+  const ChatStack = createNativeStackNavigator();
+  const LikeStack = createNativeStackNavigator();
+  const HomeStack = createNativeStackNavigator();
 
   return (
     <Tab.Navigator screenOptions={{ tabBarShowLabel: false, headerShown: false, tabBarStyle: { backgroundColor: "#e58578" } }}>
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
         options={{
           tabBarIcon: ({ color, focused }) => (
             <View style={focused ? styles.iconFocus : null}>
@@ -28,10 +28,15 @@ const TabNavigator = () => {
             </View>
           ),
         }}
-      ></Tab.Screen>
+      >
+        {() => (
+          <HomeStack.Navigator>
+            <HomeStack.Screen name="Like" component={HomeScreen} options={homeHeader} />
+          </HomeStack.Navigator>
+        )}
+      </Tab.Screen>
       <Tab.Screen
         name="Like"
-        component={LikeScreen}
         options={{
           tabBarIcon: ({ color, focused }) => (
             <View style={focused ? styles.iconFocus : null}>
@@ -39,10 +44,15 @@ const TabNavigator = () => {
             </View>
           ),
         }}
-      ></Tab.Screen>
+      >
+        {() => (
+          <LikeStack.Navigator>
+            <LikeStack.Screen name="Like" component={LikeScreen} options={switchOnlyHeader} />
+          </LikeStack.Navigator>
+        )}
+      </Tab.Screen>
       <Tab.Screen
         name="Chat"
-        component={ChatScreen}
         options={{
           tabBarIcon: ({ color, focused }) => (
             <View style={focused ? styles.iconFocus : null}>
@@ -50,7 +60,13 @@ const TabNavigator = () => {
             </View>
           ),
         }}
-      ></Tab.Screen>
+      >
+        {() => (
+          <ChatStack.Navigator>
+            <ChatStack.Screen name="ChatList" component={ChatScreen} options={switchOnlyHeader} />
+          </ChatStack.Navigator>
+        )}
+      </Tab.Screen>
       <Tab.Screen
         name="Forum"
         component={ForumScreen}
@@ -64,7 +80,6 @@ const TabNavigator = () => {
       ></Tab.Screen>
       <Tab.Screen
         name="User"
-        // component={ProfileScreen}
         options={{
           tabBarIcon: ({ color, focused }) => (
             <View style={focused ? styles.iconFocus : null}>
@@ -75,10 +90,7 @@ const TabNavigator = () => {
       >
         {() => (
           <ProfileStack.Navigator>
-            <ProfileStack.Screen name="Profile" component={ProfileScreen} />
-            <ProfileStack.Screen name="EditPet" component={EditPetScreen} />
-            <ProfileStack.Screen name="ImageUpload" component={ImageUpload} />
-            <ProfileStack.Screen name="PetForm" component={PetFormScreen} />
+            <ProfileStack.Screen name="Profile" component={ProfileScreen} options={petProfileHeader} />
           </ProfileStack.Navigator>
         )}
       </Tab.Screen>
