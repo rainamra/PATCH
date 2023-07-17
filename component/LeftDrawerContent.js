@@ -14,7 +14,7 @@ const LeftDrawerContent = (props) => {
 
   return (
     <View
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: font.light.color }}
       onLayout={(event) => {
         const { width } = event.nativeEvent.layout;
         setDrawerWidth(width);

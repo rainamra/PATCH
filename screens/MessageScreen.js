@@ -37,7 +37,7 @@ const MessageScreen = ({ navigation }) => {
   const sendMessage = () => {};
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: font.light.color }}>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }} keyboardVerticalOffset={10}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <FlatList

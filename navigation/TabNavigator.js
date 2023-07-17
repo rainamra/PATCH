@@ -3,24 +3,20 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { homeHeader, petProfileHeader, switchOnlyHeader } from "../component/HeaderComponent";
-import ChatScreen from "../screens/ChatScreen";
-import ForumScreen from "../screens/ForumScreen";
-import HomeScreen from "../screens/HomeScreen";
-import LikeScreen from "../screens/LikeScreen";
+import { userProfileHeader } from "../component/HeaderComponent";
+import ForumListScreen from "../screens/ForumListScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import { ChatDrawer, HomeDrawer, LikeDrawer } from "./DrawerNavigation";
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
   const ProfileStack = createNativeStackNavigator();
-  const ChatStack = createNativeStackNavigator();
-  const LikeStack = createNativeStackNavigator();
-  const HomeStack = createNativeStackNavigator();
+  const ForumStack = createNativeStackNavigator();
 
   return (
     <Tab.Navigator screenOptions={{ tabBarShowLabel: false, headerShown: false, tabBarStyle: { backgroundColor: "#e58578" } }}>
       <Tab.Screen
-        name="Home"
+        name="HomeTab"
         options={{
           tabBarIcon: ({ color, focused }) => (
             <View style={focused ? styles.iconFocus : null}>
@@ -29,11 +25,7 @@ const TabNavigator = () => {
           ),
         }}
       >
-        {() => (
-          <HomeStack.Navigator>
-            <HomeStack.Screen name="Like" component={HomeScreen} options={homeHeader} />
-          </HomeStack.Navigator>
-        )}
+        {() => <HomeDrawer />}
       </Tab.Screen>
       <Tab.Screen
         name="Like"
@@ -45,11 +37,7 @@ const TabNavigator = () => {
           ),
         }}
       >
-        {() => (
-          <LikeStack.Navigator>
-            <LikeStack.Screen name="Like" component={LikeScreen} options={switchOnlyHeader} />
-          </LikeStack.Navigator>
-        )}
+        {() => <LikeDrawer />}
       </Tab.Screen>
       <Tab.Screen
         name="Chat"
@@ -61,15 +49,10 @@ const TabNavigator = () => {
           ),
         }}
       >
-        {() => (
-          <ChatStack.Navigator>
-            <ChatStack.Screen name="ChatList" component={ChatScreen} options={switchOnlyHeader} />
-          </ChatStack.Navigator>
-        )}
+        {() => <ChatDrawer />}
       </Tab.Screen>
       <Tab.Screen
         name="Forum"
-        component={ForumScreen}
         options={{
           tabBarIcon: ({ color, focused }) => (
             <View style={focused ? styles.iconFocus : null}>
@@ -77,7 +60,13 @@ const TabNavigator = () => {
             </View>
           ),
         }}
-      ></Tab.Screen>
+      >
+        {() => (
+          <ForumStack.Navigator>
+            <ForumStack.Screen name="ForumList" component={ForumListScreen} />
+          </ForumStack.Navigator>
+        )}
+      </Tab.Screen>
       <Tab.Screen
         name="User"
         options={{
@@ -87,10 +76,11 @@ const TabNavigator = () => {
             </View>
           ),
         }}
+        dr
       >
         {() => (
           <ProfileStack.Navigator>
-            <ProfileStack.Screen name="Profile" component={ProfileScreen} options={petProfileHeader} />
+            <ProfileStack.Screen name="Profile" component={ProfileScreen} options={userProfileHeader} />
           </ProfileStack.Navigator>
         )}
       </Tab.Screen>

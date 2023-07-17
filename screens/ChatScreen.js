@@ -22,7 +22,7 @@ const ChatScreen = ({ navigation }) => {
 
   const renderMatchedSheetContent = () => {
     return (
-      <View style={{}}>
+      <View>
         <TouchableHighlight
           onPress={() => {
             navigation.navigate("Message");

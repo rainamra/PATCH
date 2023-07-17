@@ -3,30 +3,32 @@ import React from "react";
 import { petProfileHeader, userProfileHeader } from "../component/HeaderComponent";
 import useAuth from "../hooks/useAuth";
 import EditPetScreen from "../screens/EditPetScreen";
+import ForumFormScreen from "../screens/ForumFormScreen";
+import ForumScreen from "../screens/ForumScreen";
 import GetStarted from "../screens/GetStarted";
 import LoginScreen from "../screens/LoginScreen";
+import MessageScreen from "../screens/MessageScreen";
 import PetFormScreen from "../screens/PetFormScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import SignUpScreen from "../screens/SignUpScreen";
 import TabNavigator from "./TabNavigator";
-import MessageScreen from "../screens/MessageScreen";
 
 const Stack = createNativeStackNavigator();
-const HomeStack = createNativeStackNavigator();
 
 const StackNavigator = () => {
   const { user } = useAuth();
 
   return (
-    // <Header>
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {user ? (
         <>
-          <Stack.Screen name="HomeTabs" component={TabNavigator} />
+          <Stack.Screen name="Home" component={TabNavigator} />
           <Stack.Screen name="ProfileNoTab" component={ProfileScreen} options={userProfileHeader} />
           <Stack.Screen name="EditPet" component={EditPetScreen} options={petProfileHeader} />
           <Stack.Screen name="PetForm" component={PetFormScreen} options={petProfileHeader} />
           <Stack.Screen name="Message" component={MessageScreen} />
+          <Stack.Screen name="ForumScreen" component={ForumScreen} />
+          <Stack.Screen name="ForumForm" component={ForumFormScreen} />
         </>
       ) : (
         <>
@@ -36,7 +38,6 @@ const StackNavigator = () => {
         </>
       )}
     </Stack.Navigator>
-    // </Header>
   );
 };
 export default StackNavigator;

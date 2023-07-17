@@ -47,10 +47,10 @@ export default function App() {
     <NavigationContainer onReady={onLayoutRootView}>
       <AuthProvider>
         <BottomSheetModalProvider>
-          <BottomSheetModalProvider>
+          {/* <BottomSheetModalProvider> */}
             <StackNavigator />
           </BottomSheetModalProvider>
-        </BottomSheetModalProvider>
+        {/* </BottomSheetModalProvider> */}
       </AuthProvider>
     </NavigationContainer>
   );
