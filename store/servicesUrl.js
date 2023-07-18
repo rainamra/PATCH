@@ -1,4 +1,4 @@
-export const userPetUrl = "http://localhost:8080"
+export const userPetUrl = "http://localhost:8080/user"
 export const matchMakingUr = "http://localhost:8080"
 export const forumUrl = "http://localhost:8080"
 export const chatUrl = "http://localhost:8080"

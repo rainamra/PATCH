@@ -6,7 +6,7 @@ import Carousel from "react-native-reanimated-carousel";
 import { PET_PROFILES } from "../_mockApis/userPet";
 import { font } from "../styles";
 import { useDispatch, useSelector } from "../store";
-import { getPets, getUsers } from "../store/slices/userPet";
+import { getPetsByUserId, getUsers } from "../store/slices/userPet";
 
 const HomeScreen = () => {
   const PAGE_WIDTH = Dimensions.get("window").width;
@@ -14,8 +14,8 @@ const HomeScreen = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getUsers());
-    dispatch(getPets());
+    // dispatch(getUsers());
+    dispatch(getPetsByUserId("UID-20230710190419"));
   }, []);
 
   const { users, pets } = useSelector((state) => state.userpet);
