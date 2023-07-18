@@ -13,11 +13,12 @@
     "@expo-google-fonts/nunito": "^0.2.3",
     "@expo/webpack-config": "^18.0.1",
     "@gorhom/bottom-sheet": "^4.4.7",
+    "@react-native-async-storage/async-storage": "^1.19.0",
     "@react-navigation/bottom-tabs": "^6.5.8",
     "@react-navigation/drawer": "^6.6.3",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
-    "axios": "^1.4.0",
+    "@reduxjs/toolkit": "^1.9.5",
     "expo": "~48.0.15",
     "expo-app-loading": "^2.1.1",
     "expo-file-system": "~15.2.2",
@@ -38,10 +39,13 @@
     "react-native-web": "~0.18.10",
     "react-redux": "^8.1.1",
     "redux": "^4.2.1",
+    "redux-persist": "^6.0.0",
     "tailwind-rn": "^4.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "axios": "^1.4.0",
+    "axios-mock-adapter": "^1.21.5"
   },
   "private": true
 }

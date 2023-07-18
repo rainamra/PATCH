@@ -1,0 +1,35 @@
+{
+  "error_schema": {
+    "error_code": "200",
+    "error_message": "SUCCESS"
+  },
+  "output_schema": {
+    "data": [
+      {
+        "id": "uid-1",
+        "name": "Rainamira Azzahra",
+        "profileUrl": "../assets/images/rainamira-avatar.jpg"
+      },
+      {
+        "id": "uid-2",
+        "name": "Vincent Alden",
+        "profileUrl": "../assets/images/vincent-alden-avatar.jpg"
+      },
+      {
+        "id": "uid-3",
+        "name": "Raissya Natta",
+        "profileUrl": "../assets/images/raisya-natta-avatar.jpg"
+      },
+      {
+        "id": "uid-4",
+        "name": "Rakha Putra",
+        "profileUrl": "../assets/images/rakha-putra-avatar.jpg"
+      },
+      {
+        "id": "uid-5",
+        "name": "Rahmmi Putri",
+        "profileUrl": "../assets/images/rahmi-putri-avatar.jpg"
+      }
+    ]
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "error_schema": {
+    "error_code": "200",
+    "error_message": "SUCCESS"
+  },
+  "output_schema": {
+    "data": [
+      {
+        "id": "lid-1",
+        "pid1": "pid-1",
+        "pid2": "pid-2",
+        "type": 1
+      },
+      {
+        "id": "lid-2",
+        "pid1": "pid-1",
+        "pid2": "pid-6",
+        "type": 0
+      },
+      {
+        "id": "lid-3",
+        "pid1": "pid-1",
+        "pid2": "pid-10",
+        "type": 0
+      },
+      {
+        "id": "lid-4",
+        "pid1": "pid-3",
+        "pid2": "pid-5",
+        "type": 0
+      },
+      {
+        "id": "lid-5",
+        "pid1": "pid-5",
+        "pid2": "pid-11",
+        "type": 0
+      },
+      {
+        "id": "lid-6",
+        "pid1": "pid-6",
+        "pid2": "pid-1",
+        "type": 1
+      },
+      {
+        "id": "lid-7",
+        "pid1": "pid-8",
+        "pid2": "pid-2",
+        "type": 0
+      },
+      {
+        "id": "lid-8",
+        "pid1": "pid-8",
+        "pid2": "pid-1",
+        "type": 0
+      },
+      {
+        "id": "lid-9",
+        "pid1": "pid-10",
+        "pid2": "pid-2",
+        "type": 1
+      },
+    
+      {
+        "id": "lid-10",
+        "pid1": "pid-11",
+        "pid2": "pid-3",
+        "type": 0
+      },
+      {
+        "id": "lid-11",
+        "pid1": "pid-3",
+        "pid2": "pid-9",
+        "type": 0
+      },
+      {
+        "id": "lid-1",
+        "pid1": "pid-2",
+        "pid2": "pid-1",
+        "type": 1
+      },
+      {
+        "id": "lid-2",
+        "pid1": "pid-6",
+        "pid2": "pid-1",
+        "type": 0
+      },
+      {
+        "id": "lid-5",
+        "pid1": "pid-11",
+        "pid2": "pid-5",
+        "type": 0
+      }
+    ]
+  }
+}

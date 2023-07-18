@@ -1,0 +1,5 @@
+export const userPetUrl = "http://localhost:8080"
+export const matchMakingUr = "http://localhost:8080"
+export const forumUrl = "http://localhost:8080"
+export const chatUrl = "http://localhost:8080"
+export const likeUrl = "http://localhost:8080"

@@ -1,0 +1,27 @@
+{
+  "error_schema": {
+    "error_code": "200",
+    "error_message": "SUCCESS"
+  },
+  "output_schema": {
+    "data": [
+      {
+        "id": "fid-1",
+        "title": "The Unconventional Habits of Cats and Dogs Revealed",
+        "body": "Discover the intriguing and sometimes quirky habits of cats and dogs that keep their owners entertained and amazed. From playful antics to surprising behavior, these furry companions continue to surprise us. Share your favorite stories and experiences with your pets!"
+      },
+      {
+        "id": "fid-2",
+        "title": "The Power of Healing: Cats and Dogs as Therapy Companions",
+        "body": "Explore the heartwarming stories of how cats and dogs have become therapy companions, providing comfort and support to those in need. These amazing animals offer healing and unconditional love. Let's hear your thoughts on the incredible impact of therapy pets!"
+      },
+      {
+        "id": "fid-3",
+        "title": "The Fascinating World of Cat and Dog Breeding",
+        "body": "Discover the art of responsible breeding that promotes healthier and happier feline and canine companions. Learn how to contribute to their well-being and create lasting bonds. What are your thoughts on responsible pet breeding?"
+      }
+    ]
+  }
+}
+
+

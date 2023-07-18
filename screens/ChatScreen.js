@@ -58,37 +58,37 @@ const ChatScreen = ({ navigation }) => {
               {/* MATCHED LIST - NO CHAT HISTORY */}
               <TouchableHighlight style={{ width: viewWidth / 5, height: viewWidth / 5, borderRadius: 100, overflow: "hidden", borderWidth: 8, borderColor: font.pink.color, marginRight: 20 }} onPress={() => handlePresentMatchedModal()}>
                 <View style={{ borderColor: font.light.color, borderWidth: 2, borderRadius: 100 }}>
-                  <Image source={require("../assets/images/mishka-1.jpeg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
+                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
                 </View>
               </TouchableHighlight>
               <TouchableHighlight style={{ width: viewWidth / 5, height: viewWidth / 5, borderRadius: 100, overflow: "hidden", borderWidth: 8, borderColor: font.pink.color, marginRight: 20 }}>
                 <View style={{ borderColor: font.light.color, borderWidth: 2, borderRadius: 100 }}>
-                  <Image source={require("../assets/images/mishka-1.jpeg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
+                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
                 </View>
               </TouchableHighlight>
               <TouchableHighlight style={{ width: viewWidth / 5, height: viewWidth / 5, borderRadius: 100, overflow: "hidden", borderWidth: 8, borderColor: font.pink.color, marginRight: 20 }}>
                 <View style={{ borderColor: font.light.color, borderWidth: 2, borderRadius: 100 }}>
-                  <Image source={require("../assets/images/mishka-1.jpeg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
+                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
                 </View>
               </TouchableHighlight>
               <TouchableHighlight style={{ width: viewWidth / 5, height: viewWidth / 5, borderRadius: 100, overflow: "hidden", borderWidth: 8, borderColor: font.pink.color, marginRight: 20 }}>
                 <View style={{ borderColor: font.light.color, borderWidth: 2, borderRadius: 100 }}>
-                  <Image source={require("../assets/images/mishka-1.jpeg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
+                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
                 </View>
               </TouchableHighlight>
               <TouchableHighlight style={{ width: viewWidth / 5, height: viewWidth / 5, borderRadius: 100, overflow: "hidden", borderWidth: 8, borderColor: font.pink.color, marginRight: 20 }}>
                 <View style={{ borderColor: font.light.color, borderWidth: 2, borderRadius: 100 }}>
-                  <Image source={require("../assets/images/mishka-1.jpeg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
+                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
                 </View>
               </TouchableHighlight>
               <TouchableHighlight style={{ width: viewWidth / 5, height: viewWidth / 5, borderRadius: 100, overflow: "hidden", borderWidth: 8, borderColor: font.pink.color, marginRight: 20 }}>
                 <View style={{ borderColor: font.light.color, borderWidth: 2, borderRadius: 100 }}>
-                  <Image source={require("../assets/images/mishka-1.jpeg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
+                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
                 </View>
               </TouchableHighlight>
               <TouchableHighlight style={{ width: viewWidth / 5, height: viewWidth / 5, borderRadius: 100, overflow: "hidden", borderWidth: 8, borderColor: font.pink.color, marginRight: 20 }}>
                 <View style={{ borderColor: font.light.color, borderWidth: 2, borderRadius: 100 }}>
-                  <Image source={require("../assets/images/mishka-1.jpeg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
+                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
                 </View>
               </TouchableHighlight>
             </View>

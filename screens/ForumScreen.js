@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, TouchableHighlight, Image } from "react-native";
 import React, { useState, useLayoutEffect } from "react";
 import { Ionicons, MaterialIcons, AntDesign } from "@expo/vector-icons";
-import { USER_PET_PROFILES } from "../_mockApis/userPet";
+import { USER_PET_PROFILES } from "../_mockApis/payload/userPet";
 import { HeaderTitle } from "../component/HeaderComponent";
 import { font } from "../styles";
 

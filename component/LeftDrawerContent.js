@@ -4,7 +4,7 @@ import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { USER_PET_PROFILES } from "../_mockApis/userPet";
+import { USER_PET_PROFILES } from "../_mockApis/payload/userPet";
 import { font } from "../styles";
 
 const LeftDrawerContent = (props) => {

@@ -1,0 +1,66 @@
+{
+  "error_schema": {
+    "error_code": "200",
+    "error_message": "SUCCESS"
+  },
+  "output_schema": {
+    "data": [
+      {
+        "id": "cid-1",
+        "fid": "fid-1",
+        "uid": "uid-1",
+        "body": "My cat has the most peculiar habits! She's a little diva, and I adore every moment of it. What are some of the unique habits your pets have?"
+      },
+      {
+        "id": "cid-2",
+        "fid": "fid-1",
+        "uid": "uid-2",
+        "body": "I never knew dogs could be such clowns! My pup's antics always brighten my day. Do your pets have any funny habits that make you smile?"
+      },
+      {
+        "id": "cid-3",
+        "fid": "fid-1",
+        "uid": "uid-3",
+        "body": "Cats and dogs are full of surprises! Their quirky habits make them even more endearing. Share some of the funniest or most unusual behaviors your pets have displayed!"
+      },
+      {
+        "id": "cid-4",
+        "fid": "fid-2",
+        "uid": "uid-1",
+        "body": "Therapy pets are true heroes, bringing joy and comfort to those facing challenges. I'm in awe of their ability to heal hearts. Have you encountered therapy cats or dogs making a difference?"
+      },
+      {
+        "id": "cid-5",
+        "fid": "fid-2",
+        "uid": "uid-2",
+        "body": "Cats and dogs have such a remarkable impact on mental health! Their companionship is a source of solace. How have therapy pets touched your life or someone you know?"
+      },
+      {
+        "id": "cid-6",
+        "fid": "fid-2",
+        "uid": "uid-3",
+        "body": "Therapy cats and dogs are angels on Earth. Their presence can brighten the darkest days. Share your experiences or thoughts on the wonderful work done by these furry therapists!"
+      },
+      {
+        "id": "cid-7",
+        "fid": "fid-3",
+        "uid": "uid-1",
+        "body": "I had no idea there was so much to learn about responsible breeding! It's essential to ensure our pets' happiness and health. What do you think we can do to spread awareness?"
+      },
+      {
+        "id": "cid-8",
+        "fid": "fid-3",
+        "uid": "uid-2",
+        "body": "Responsible breeding is a testament to our love for these furry friends. Let's make sure they have the best possible lives! How can we support ethical breeders?"
+      },
+      {
+        "id": "cid-9",
+        "fid": "fid-3",
+        "uid": "uid-3",
+        "body": "Learning about cat and dog breeding has been eye-opening. I'll do my part to support ethical practices! What steps can we take to discourage irresponsible breeding?"
+      }
+    ]
+  }
+}
+
+

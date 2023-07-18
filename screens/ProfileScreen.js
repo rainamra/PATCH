@@ -4,7 +4,7 @@ import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
 import React, { useRef, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, View } from "react-native";
-import { USER_PET_PROFILES } from "../_mockApis/userPet";
+import { USER_PET_PROFILES } from "../_mockApis/payload/userPet";
 import BottomSheet from "../component/BottomSheet";
 import { font } from "../styles";
 

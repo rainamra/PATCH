@@ -5,7 +5,7 @@ import { font } from "../styles";
 import { TextInput } from "react-native-gesture-handler";
 import SenderMessage from "../component/SenderMessage";
 import ReceiverMessage from "../component/ReceiverMessage";
-import { USER_PET_PROFILES } from "../_mockApis/userPet";
+import { USER_PET_PROFILES } from "../_mockApis/payload/userPet";
 
 const MessageScreen = ({ navigation }) => {
   useLayoutEffect(() => {

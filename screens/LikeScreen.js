@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Image, ScrollView, TouchableHighlight } from "react-native";
 import React, { useState } from "react";
-import { LIKE_PET_PROFILES, USER_PET_PROFILES } from "../_mockApis/userPet";
+import { LIKE_PET_PROFILES, USER_PET_PROFILES } from "../_mockApis/payload/userPet";
 import { font } from "../styles";
 
 const LikeScreen = () => {

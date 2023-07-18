@@ -7,6 +7,10 @@ import { StatusBar } from "react-native";
 import "react-native-gesture-handler";
 import { AuthProvider } from "./hooks/useAuth";
 import StackNavigator from "./navigation/StackNavigator";
+import { Provider } from "react-redux";
+import { store, persister } from "./store/index";
+import { PersistGate } from 'redux-persist/integration/react';
+// import context from "./context";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -44,14 +48,18 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer onReady={onLayoutRootView}>
-      <AuthProvider>
-        <BottomSheetModalProvider>
-          {/* <BottomSheetModalProvider> */}
-            <StackNavigator />
-          </BottomSheetModalProvider>
-        {/* </BottomSheetModalProvider> */}
-      </AuthProvider>
-    </NavigationContainer>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persister}>
+        <NavigationContainer onReady={onLayoutRootView}>
+          <AuthProvider>
+            <BottomSheetModalProvider>
+              {/* <BottomSheetModalProvider> */}
+              <StackNavigator />
+            </BottomSheetModalProvider>
+            {/* </BottomSheetModalProvider> */}
+          </AuthProvider>
+        </NavigationContainer>
+      </PersistGate>
+    </Provider>
   );
 }

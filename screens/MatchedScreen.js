@@ -30,7 +30,7 @@ const MatchedScreen = () => {
           </View>
           <View style={{ flexDirection: "row", justifyContent: "center", width: "100%", marginBottom: 40 }}>
             <View style={{ height: screenWidth * (40 / 100), width: screenWidth * (30 / 100), borderRadius: 10, overflow: "hidden", transform: [{ rotate: "-20deg" }] }}>
-              <Image source={require("../assets/images/mishka-1.jpeg")} resizeMode={"cover"} style={{ height: "100%", width: "100%" }}></Image>
+              <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={{ height: "100%", width: "100%" }}></Image>
             </View>
             <View style={{ height: screenWidth * (40 / 100), width: screenWidth * (30 / 100), borderRadius: 10, overflow: "hidden", transform: [{ rotate: "20deg" }] }}>
               <Image source={require("../assets/images/sashi-1.jpeg")} resizeMode={"cover"} style={{ height: "100%", width: "100%" }}></Image>
