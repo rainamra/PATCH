@@ -29,7 +29,7 @@ const LikeScreen = () => {
         <View style={styles.cardWrapper}>
           {LIKE_PET_PROFILES.length > 0 &&
             LIKE_PET_PROFILES.map((pet, index) => (
-              <TouchableHighlight key={index} style={[styles.card, { height: (scrollHeight - 70) / 2 }]}>
+              <TouchableHighlight key={index} style={[styles.card, { height: (scrollHeight - 70) / 2 }]} onPress={() => {}}>
                 <View>
                   <Image source={pet.photosUrl[0]} resizeMode={"cover"} style={styles.image}></Image>
                   <Text style={styles.petName}>{pet.name}</Text>

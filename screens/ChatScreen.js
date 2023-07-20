@@ -1,14 +1,19 @@
 import { AntDesign } from "@expo/vector-icons";
-import React, { useState, useRef } from "react";
-import { Image, ScrollView, Text, TouchableHighlight, View } from "react-native";
-import { font } from "../styles";
+import React, { useRef, useState } from "react";
+import { Image, ScrollView, Text, TouchableHighlight, View, StyleSheet } from "react-native";
+import petList from "../_mockApis/payload/sample_pet_list.json";
 import BottomSheet from "../component/BottomSheet";
+import { useDispatch } from "../store";
+import { addNewPet } from "../store/slices/userPet";
+import { font } from "../styles";
 
 const ChatScreen = ({ navigation }) => {
   const [viewWidth, setViewWidth] = useState(false);
   const [matchedModalIsOpen, setMatchedModalIsOpen] = useState(false);
 
   const matchedSheetModalRef = useRef(null);
+
+  // const dispatch = useDispatch();
 
   const handlePresentMatchedModal = () => {
     matchedSheetModalRef.current?.present();
@@ -56,39 +61,22 @@ const ChatScreen = ({ navigation }) => {
           <ScrollView vertical={false} horizontal={true} showsHorizontalScrollIndicator={false}>
             <View style={{ flexDirection: "row", paddingHorizontal: 20 }}>
               {/* MATCHED LIST - NO CHAT HISTORY */}
-              <TouchableHighlight style={{ width: viewWidth / 5, height: viewWidth / 5, borderRadius: 100, overflow: "hidden", borderWidth: 8, borderColor: font.pink.color, marginRight: 20 }} onPress={() => handlePresentMatchedModal()}>
-                <View style={{ borderColor: font.light.color, borderWidth: 2, borderRadius: 100 }}>
-                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
+              <TouchableHighlight style={[{ width: viewWidth / 5, height: viewWidth / 5 }, , styles.matchWrapper]} onPress={() => handlePresentMatchedModal()}>
+                <View style={styles.imageWrapper}>
+                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={styles.image}></Image>
                 </View>
               </TouchableHighlight>
-              <TouchableHighlight style={{ width: viewWidth / 5, height: viewWidth / 5, borderRadius: 100, overflow: "hidden", borderWidth: 8, borderColor: font.pink.color, marginRight: 20 }}>
-                <View style={{ borderColor: font.light.color, borderWidth: 2, borderRadius: 100 }}>
-                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
-                </View>
-              </TouchableHighlight>
-              <TouchableHighlight style={{ width: viewWidth / 5, height: viewWidth / 5, borderRadius: 100, overflow: "hidden", borderWidth: 8, borderColor: font.pink.color, marginRight: 20 }}>
-                <View style={{ borderColor: font.light.color, borderWidth: 2, borderRadius: 100 }}>
-                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
-                </View>
-              </TouchableHighlight>
-              <TouchableHighlight style={{ width: viewWidth / 5, height: viewWidth / 5, borderRadius: 100, overflow: "hidden", borderWidth: 8, borderColor: font.pink.color, marginRight: 20 }}>
-                <View style={{ borderColor: font.light.color, borderWidth: 2, borderRadius: 100 }}>
-                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
-                </View>
-              </TouchableHighlight>
-              <TouchableHighlight style={{ width: viewWidth / 5, height: viewWidth / 5, borderRadius: 100, overflow: "hidden", borderWidth: 8, borderColor: font.pink.color, marginRight: 20 }}>
-                <View style={{ borderColor: font.light.color, borderWidth: 2, borderRadius: 100 }}>
-                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
-                </View>
-              </TouchableHighlight>
-              <TouchableHighlight style={{ width: viewWidth / 5, height: viewWidth / 5, borderRadius: 100, overflow: "hidden", borderWidth: 8, borderColor: font.pink.color, marginRight: 20 }}>
-                <View style={{ borderColor: font.light.color, borderWidth: 2, borderRadius: 100 }}>
-                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
-                </View>
-              </TouchableHighlight>
-              <TouchableHighlight style={{ width: viewWidth / 5, height: viewWidth / 5, borderRadius: 100, overflow: "hidden", borderWidth: 8, borderColor: font.pink.color, marginRight: 20 }}>
-                <View style={{ borderColor: font.light.color, borderWidth: 2, borderRadius: 100 }}>
-                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
+              <TouchableHighlight
+                style={[{ width: viewWidth / 5, height: viewWidth / 5 }, styles.matchWrapper]}
+                // onPress={() => {
+                //   petList.output_schema.data.map((pet) => {
+                //     console.log("pet", pet);
+                //     dispatch(addNewPet(pet));
+                //   });
+                // }}
+              >
+                <View style={styles.imageWrapper}>
+                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={styles.image}></Image>
                 </View>
               </TouchableHighlight>
             </View>
@@ -98,29 +86,13 @@ const ChatScreen = ({ navigation }) => {
         <View style={{ paddingHorizontal: 20 }}>
           <TouchableHighlight style={{ marginBottom: 20 }} onPress={() => navigation.navigate("Message")}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <View style={{ borderRadius: 100, width: 80, height: 80 }}>
-                <Image source={require("../assets/images/sashi-1.jpeg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
+              <View style={styles.chatImageWrapper}>
+                <Image source={require("../assets/images/sashi-1.jpeg")} resizeMode={"cover"} style={styles.image}></Image>
               </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  height: 80,
-                  alignItems: "center",
-                  backgroundColor: font.secondary.color,
-                  borderColor: font.primary.color,
-                  borderWidth: 2,
-                  borderRadius: 10,
-                  paddingLeft: 60,
-                  marginLeft: -40,
-                  zIndex: -1,
-                  paddingRight: 15,
-                  width: viewWidth - 80,
-                  justifyContent: "space-between",
-                }}
-              >
+              <View style={[styles.textWrapper, { width: viewWidth - 80 }]}>
                 <View style={{ height: "100%", paddingVertical: 10 }}>
-                  <Text style={[font.brown, font.bold, font.h5, { marginBottom: 5 }]}>Prada</Text>
-                  <Text style={[font.primary, font.bold, font.p]}>Sent you a message</Text>
+                  <Text style={styles.text1}>Prada</Text>
+                  <Text style={styles.text2}>Sent you a message</Text>
                 </View>
                 <View>
                   <AntDesign name="rightcircle" size={25} color="#f0ae5e" />
@@ -130,29 +102,13 @@ const ChatScreen = ({ navigation }) => {
           </TouchableHighlight>
           <TouchableHighlight style={{ marginBottom: 20 }} onPress={() => navigation.navigate("Message")}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <View style={{ borderRadius: 100, width: 80, height: 80 }}>
-                <Image source={require("../assets/images/sashi-1.jpeg")} resizeMode={"cover"} style={{ height: "100%", width: "100%", borderRadius: 100 }}></Image>
+              <View style={[styles.chatImageWrapper, { width: viewWidth - 80 }]}>
+                <Image source={require("../assets/images/sashi-1.jpeg")} resizeMode={"cover"} style={styles.image}></Image>
               </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  height: 80,
-                  alignItems: "center",
-                  backgroundColor: font.secondary.color,
-                  borderColor: font.primary.color,
-                  borderWidth: 2,
-                  borderRadius: 10,
-                  paddingLeft: 60,
-                  marginLeft: -40,
-                  zIndex: -1,
-                  paddingRight: 15,
-                  width: viewWidth - 80,
-                  justifyContent: "space-between",
-                }}
-              >
+              <View style={styles.textWrapper}>
                 <View style={{ height: "100%", paddingVertical: 10 }}>
-                  <Text style={[font.brown, font.bold, font.h5, { marginBottom: 5 }]}>Prada</Text>
-                  <Text style={[font.primary, font.bold, font.p]}>Sent you a message</Text>
+                  <Text style={styles.text1}>Prada</Text>
+                  <Text style={styles.text2}>Sent you a message</Text>
                 </View>
                 <View>
                   <AntDesign name="rightcircle" size={25} color="#f0ae5e" />
@@ -166,5 +122,29 @@ const ChatScreen = ({ navigation }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  imageWrapper: { borderColor: font.light.color, borderWidth: 2, borderRadius: 100 },
+  image: { height: "100%", width: "100%", borderRadius: 100 },
+  matchWrapper: { borderRadius: 100, overflow: "hidden", borderWidth: 8, borderColor: font.pink.color, marginRight: 20 },
+  textWrapper: {
+    flexDirection: "row",
+    height: 80,
+    alignItems: "center",
+    backgroundColor: font.secondary.color,
+    borderColor: font.primary.color,
+    borderWidth: 2,
+    borderRadius: 10,
+    paddingLeft: 60,
+    marginLeft: -40,
+    zIndex: -1,
+    paddingRight: 15,
+    justifyContent: "space-between",
+  },
+  text1: [font.brown, font.bold, font.h5, { marginBottom: 5 }],
+  text2: [font.primary, font.bold, font.p],
+  image: { height: "100%", width: "100%", borderRadius: 100 },
+  chatImageWrapper: { borderRadius: 100, width: 80, height: 80 },
+});
 
 export default ChatScreen;

@@ -1,0 +1,107 @@
+{
+  "error_schema": {
+    "error_code": "200",
+    "error_message": "SUCCESS"
+  },
+  "output_schema": {
+    "data": [
+      {
+        "uid": "UID-20230719185653",
+        "name": "Fluffy",
+        "type": "Dog",
+        "gender": "Female",
+        "breed": "Poodle",
+        "age": 36,
+        "weight": 7.8,
+        "character1": "outgoing",
+        "character2": "curious",
+        "character3": "excitable",
+        "likes1": "Playing fetch, going for walks",
+        "dislikes1": "Thunderstorms",
+        "likes2": "I'm a happy and friendly dog looking for a loving family.",
+        "vaccineStatus": "vaccinated",
+        "color": "White, Cream",
+        "longitude": 104.814165,
+        "latitude": -6.300551
+      },
+
+      {
+        "uid": "UID-20230719185239",
+        "name": "Buddy",
+        "type": "Dog",
+        "gender": "Male",
+        "breed": "Labrador Retriever",
+        "age": 72,
+        "weight": 8.6,
+        "character1": "trustworthy",
+        "character2": "imaginative",
+        "character3": "not lazy",
+        "likes1": "Playing fetch, swimming",
+        "dislikes1": "Being alone for long periods",
+        "likes2": "I'm a friendly and active Labrador Retriever ready to join a loving family.",
+        "vaccineStatus": "vaccinated",
+        "color": "Yellow, Cream",
+        "longitude": 104.814165,
+        "latitude": -6.300551
+      },
+
+      {
+        "uid": "UID-20230719185706",
+        "name": "Rocky",
+        "type": "Dog",
+        "gender": "Male",
+        "breed": "German Shepherd",
+        "age": 48,
+        "weight": 9.2,
+        "character1": "imaginative",
+        "character2": "thorough",
+        "character3": "trustworthy",
+        "likes1": "Training, going for walks",
+        "dislikes1": "Strangers approaching aggressively",
+        "likes2": "I'm a smart and loyal German Shepherd in need of a caring family.",
+        "vaccineStatus": "vaccinated",
+        "color": "Black, Tan",
+        "longitude": 104.814165,
+        "latitude": -6.300551
+      },
+      {
+        "uid": "UID-20230719185649",
+        "name": "Oreo",
+        "type": "Dog",
+        "gender": "Male",
+        "breed": "Dalmatian",
+        "age": 42,
+        "weight": 7.8,
+        "character1": "imaginative",
+        "character2": "thorough",
+        "character3": "trustworthy",
+        "likes1": "Running, playing with toys",
+        "dislikes1": "Being left alone for too long",
+        "likes2": "I'm a fun-loving Dalmatian who wants to be part of a loving family.",
+        "vaccineStatus": "vaccinated",
+        "color": "White, Black",
+        "longitude": 104.814165,
+        "latitude": -6.300551
+      },
+      {
+        "uid": "uid-1",
+        "name": "Cosmo",
+        "type": "Dog",
+        "gender": "Male",
+        "breed": "Shiba Inu",
+        "age": 31,
+        "weight": 6.75,
+        "character1": "imaginative",
+        "character2": "outgoing",
+        "character3": "trustworthy",
+        "likes1": "I like my plushies!",
+        "dislikes1": "Human strangers",
+        "likes2": "I can be your friend but pls bring your own plushies on a date",
+        "vaccineStatus": "vaccinated",
+        "color": "Red, White",
+        "longitude": 104.814165,
+        "latitude": -6.300551
+      }
+    ]
+  }
+}
