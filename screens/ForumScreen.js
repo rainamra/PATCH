@@ -4,8 +4,8 @@ import { Image, Keyboard, KeyboardAvoidingView, ScrollView, StyleSheet, Text, To
 import { TextInput } from "react-native-gesture-handler";
 import { USER_PET_PROFILES } from "../_mockApis/payload/userPet";
 import { HeaderTitle } from "../component/HeaderComponent";
-import { useDispatch, useSelector } from "../store";
-import { addNewComment, addNewReply, getCommentsByForumId } from "../store/slices/forum";
+import { useDispatch, useSelector } from "../store/configureStore";
+import { addNewComment, addNewReply, getCommentsByForumId } from "../store/slices/forumApi";
 import { font } from "../styles";
 import { formatDate } from "../utils/dateUtils";
 
@@ -19,8 +19,10 @@ const ForumScreen = ({ route, navigation }) => {
 
   const { comments } = useSelector((state) => state.forum);
 
+  // console.log("data: ", data ," comments", comments);
+
   useEffect(() => {
-    dispatch(getCommentsByForumId(data?.fid));
+    dispatch(getCommentsByForumId(data.fid));
     // dispatch(getReplyByCommentId(data?.fid));
   }, []);
 
@@ -98,15 +100,15 @@ const ForumScreen = ({ route, navigation }) => {
         >
           <ScrollView style={{ padding: 20 }}>
             <View style={styles.forumWrapper}>
-              <View style={[styles.contentWrapper, { borderBottomWidth: comments.length > 0 && 1, marginBottom: comments.length > 0 && 20 }]}>
+              <View style={[styles.contentWrapper, { borderBottomWidth: comments?.length > 0 && 1, marginBottom: comments?.length > 0 && 20 }]}>
                 <Text style={styles.title}>{data.title}</Text>
                 <Text style={styles.desc}>
                   {data.user.name} - {formatDate(data.createdDate)}
                 </Text>
                 <Text style={styles.body}>{data.body}</Text>
               </View>
-              {comments.length > 0 &&
-                comments.map((comment, index) => (
+              {comments?.length > 0 &&
+                comments?.map((comment, index) => (
                   <View key={index} style={{ paddingBottom: 20, paddingHorizontal: 20 }}>
                     {/* box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25); */}
                     <View style={styles.commentBox}>
@@ -126,8 +128,8 @@ const ForumScreen = ({ route, navigation }) => {
                         </View>
                       </TouchableHighlight>
 
-                      {comment.replies > 0 &&
-                        comment.replies.map((reply) => (
+                      {comment?.replies > 0 &&
+                        comment?.replies.map((reply) => (
                           <View key={index} style={styles.replyBox}>
                             <View style={styles.headerWrapper}>
                               <View style={styles.image}>

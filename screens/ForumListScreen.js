@@ -2,13 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, TouchableHighlight, View } from "react-native";
 import { HeaderTitle } from "../component/HeaderComponent";
-import { useDispatch, useSelector } from "../store";
-import { getForums, getLikedForumsByUid, getSavedForumsByUid } from "../store/slices/forum";
+import { useDispatch, useSelector } from "../store/configureStore";
+import { getForums, getLikedForumsByUid, getSavedForumsByUid } from "../store/slices/forumApi";
 import { font } from "../styles";
 
 const ForumListScreen = ({ navigation }) => {
   const dispatch = useDispatch();
-  // const { forums } = useSelector((state) => state.forum);
+  const { forums, savedForums, likedForums } = useSelector((state) => state.forum);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -30,6 +30,8 @@ const ForumListScreen = ({ navigation }) => {
   }, []);
 
   // UID - 20230719185239;
+
+  // console.log("forums", forums);
 
   return (
     <View
@@ -72,7 +74,7 @@ const ForumListScreen = ({ navigation }) => {
         </View>
 
         <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
-          {/* {forums &&
+          {forums &&
             forums.map((forum, index) => {
               const saved = savedForums?.find((savedForum) => savedForum.fid === forum.fid);
               const liked = likedForums?.find((likedForum) => likedForum.fid === forum.fid);
@@ -98,7 +100,7 @@ const ForumListScreen = ({ navigation }) => {
                   </View>
                 </TouchableHighlight>
               );
-            })} */}
+            })}
         </View>
       </ScrollView>
     </View>

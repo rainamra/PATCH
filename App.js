@@ -8,7 +8,7 @@ import "react-native-gesture-handler";
 import { AuthProvider } from "./hooks/useAuth";
 import StackNavigator from "./navigation/StackNavigator";
 import { Provider } from "react-redux";
-import { store, persister } from "./store/index";
+import { store, persister } from "./store/configureStore";
 import { PersistGate } from 'redux-persist/integration/react';
 // import context from "./context";
 

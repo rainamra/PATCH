@@ -1,11 +1,11 @@
 import { AntDesign } from "@expo/vector-icons";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Image, ScrollView, Text, TouchableHighlight, View, StyleSheet } from "react-native";
-import petList from "../_mockApis/payload/sample_pet_list.json";
 import BottomSheet from "../component/BottomSheet";
-import { useDispatch } from "../store";
-import { addNewPet } from "../store/slices/userPet";
+import { useDispatch, useSelector } from "../store/configureStore";
+import { getMatches } from "../store/slices/matchmakingApi";
 import { font } from "../styles";
+import { getPets } from "../store/slices/userPetApi";
 
 const ChatScreen = ({ navigation }) => {
   const [viewWidth, setViewWidth] = useState(false);
@@ -13,7 +13,59 @@ const ChatScreen = ({ navigation }) => {
 
   const matchedSheetModalRef = useRef(null);
 
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const { matches } = useSelector((state) => state.matchmaking);
+  const { pets } = useSelector((state) => state.userpet);
+
+  const user = "PID-20230719201524";
+  const uid = user;
+  // const uid = user === data.pid1 ? data.pid1 : data.pid2;
+  // const receiver = uid !== data.pid1 ? data.pid1 : data.pid2;
+
+  const getMatchingObjects = (data) => {
+    const matchingObjects = data.filter((item) => item.pid1 === uid || item.pid2 === uid);
+    return matchingObjects;
+  };
+
+  // const [data1, setData1] = useState(getMatchingObjects(matches));
+  // const [data2, setData2] = useState(pets);
+  // const [test, setTest] = useState(false);
+
+  const addNameInfo = (data1, data2) => {
+    const updatedData1 = data1.map((obj1) => {
+      // Check if pid1 exists in data2
+      const found1 = data2.find((obj2) => obj2.pid === obj1.pid1);
+      if (found1) {
+        // console.log("found1: ", found1);
+        obj1 = { ...obj1, pet1: { pid: obj1.pid1, name: found1.name } };
+      }
+
+      // Check if pid2 exists in data2
+      const found2 = data2.find((obj2) => obj2.pid === obj1.pid2);
+      if (found2) {
+        // console.log("found2: ", found2);
+        obj1 = { ...obj1, pet2: { pid: obj1.pid2, name: found2.name } };
+      }
+
+      // console.log("obj1: ", obj1);
+
+      return obj1;
+    });
+
+    return updatedData1;
+  };
+
+  useEffect(() => {
+    dispatch(getMatches());
+    dispatch(getPets());
+  }, []);
+
+  // console.log("pets: ", pets);
+
+  /* GET THE PHOTO AND DETAILS by filtering pets with getMatchingObjects(matches) */
+  const matchData = addNameInfo(getMatchingObjects(matches), pets);
+
+  // console.log("matchData: ", matchData);
 
   const handlePresentMatchedModal = () => {
     matchedSheetModalRef.current?.present();
@@ -61,61 +113,45 @@ const ChatScreen = ({ navigation }) => {
           <ScrollView vertical={false} horizontal={true} showsHorizontalScrollIndicator={false}>
             <View style={{ flexDirection: "row", paddingHorizontal: 20 }}>
               {/* MATCHED LIST - NO CHAT HISTORY */}
-              <TouchableHighlight style={[{ width: viewWidth / 5, height: viewWidth / 5 }, , styles.matchWrapper]} onPress={() => handlePresentMatchedModal()}>
-                <View style={styles.imageWrapper}>
-                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={styles.image}></Image>
-                </View>
-              </TouchableHighlight>
-              <TouchableHighlight
-                style={[{ width: viewWidth / 5, height: viewWidth / 5 }, styles.matchWrapper]}
-                // onPress={() => {
-                //   petList.output_schema.data.map((pet) => {
-                //     console.log("pet", pet);
-                //     dispatch(addNewPet(pet));
-                //   });
-                // }}
-              >
-                <View style={styles.imageWrapper}>
-                  <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={styles.image}></Image>
-                </View>
-              </TouchableHighlight>
+              {
+                matchData &&
+                matchData.map((match, index) => (
+                  <TouchableHighlight key={index} style={[{ width: viewWidth / 5, height: viewWidth / 5 }, , styles.matchWrapper]} onPress={() => handlePresentMatchedModal()}>
+                    <View style={styles.imageWrapper}>
+                      <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={styles.image}></Image>
+                      {/* <Text>{match.pid1}</Text> */}
+                    </View>
+                  </TouchableHighlight>
+                ))}
             </View>
           </ScrollView>
         </View>
 
-        <View style={{ paddingHorizontal: 20 }}>
-          <TouchableHighlight style={{ marginBottom: 20 }} onPress={() => navigation.navigate("Message")}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <View style={styles.chatImageWrapper}>
-                <Image source={require("../assets/images/sashi-1.jpeg")} resizeMode={"cover"} style={styles.image}></Image>
-              </View>
-              <View style={[styles.textWrapper, { width: viewWidth - 80 }]}>
-                <View style={{ height: "100%", paddingVertical: 10 }}>
-                  <Text style={styles.text1}>Prada</Text>
-                  <Text style={styles.text2}>Sent you a message</Text>
-                </View>
-                <View>
-                  <AntDesign name="rightcircle" size={25} color="#f0ae5e" />
-                </View>
-              </View>
-            </View>
-          </TouchableHighlight>
-          <TouchableHighlight style={{ marginBottom: 20 }} onPress={() => navigation.navigate("Message")}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <View style={[styles.chatImageWrapper, { width: viewWidth - 80 }]}>
-                <Image source={require("../assets/images/sashi-1.jpeg")} resizeMode={"cover"} style={styles.image}></Image>
-              </View>
-              <View style={styles.textWrapper}>
-                <View style={{ height: "100%", paddingVertical: 10 }}>
-                  <Text style={styles.text1}>Prada</Text>
-                  <Text style={styles.text2}>Sent you a message</Text>
-                </View>
-                <View>
-                  <AntDesign name="rightcircle" size={25} color="#f0ae5e" />
-                </View>
-              </View>
-            </View>
-          </TouchableHighlight>
+        {/* GET THE PHOTO AND DETAILS */}
+        <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
+          {
+            matchData &&
+            matchData.map((match, index) => {
+              // console.log("match: ", match);
+              return (
+                <TouchableHighlight key={index} style={{ marginBottom: 20 }} onPress={() => navigation.navigate("Message", { data: match })}>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <View style={styles.chatImageWrapper}>
+                      <Image source={require("../assets/images/sashi-1.jpeg")} resizeMode={"cover"} style={styles.image}></Image>
+                    </View>
+                    <View style={[styles.textWrapper, { width: viewWidth - 80 }]}>
+                      <View style={{ height: "100%", paddingVertical: 10 }}>
+                        <Text style={styles.text1}>{uid !== match.pid1 ? match?.pet1?.name : match?.pet2?.name}</Text>
+                        <Text style={styles.text2}>Sent you a message</Text>
+                      </View>
+                      <View>
+                        <AntDesign name="rightcircle" size={25} color="#f0ae5e" />
+                      </View>
+                    </View>
+                  </View>
+                </TouchableHighlight>
+              );
+            })}
         </View>
       </ScrollView>
       <BottomSheet snapPoints={["10%", "15%"]} refBottomSheet={matchedSheetModalRef} SheetContent={renderMatchedSheetContent} isOpen={matchedModalIsOpen} toggleClose={() => setMatchedModalIsOpen(false)} />

@@ -1,18 +1,31 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Image, ScrollView, StyleSheet, Text, TouchableHighlight, View } from "react-native";
 import AnimatedDotsCarousel from "react-native-animated-dots-carousel";
 import Carousel from "react-native-reanimated-carousel";
 import { font } from "../styles";
+import { getPetByPetId } from "../store/slices/userPetApi";
+import { useDispatch, useSelector } from "../store/configureStore";
 
 const EditPetScreen = ({ route, navigation }) => {
   const [viewWidth, setViewWidth] = useState(false);
-  const { data, prevPage } = route.params;
+  const { data, prevPage, pid } = route.params;
   const [index, setIndex] = useState(0);
+
+  const dispatch = useDispatch();
+  const { selectedPet } = useSelector((state) => state.userpet);
 
   const handleIndex = (index) => {
     setIndex(index);
   };
+
+  useEffect(() => {
+    dispatch(getPetByPetId(pid));
+  }, []);
+
+  // const colors = selectedPet.colors.split(",");
+
+  console.log("selectedPet: ", selectedPet);
 
   return (
     <View style={[styles.container]}>
@@ -26,11 +39,11 @@ const EditPetScreen = ({ route, navigation }) => {
         <ScrollView scrollIndicatorInsets={{ top: 5, left: 0, bottom: 5, right: 0 }} style={{ height: "100%", paddingHorizontal: 20 }}>
           <View style={{ marginVertical: 20 }}>
             <View style={styles.titleWrapper}>
-              <Text style={[font.h1, font.bold, font.brown]}>{data?.name}</Text>
+              <Text style={[font.h1, font.bold, font.brown]}>{selectedPet?.name}</Text>
               {prevPage !== "Message" && (
                 <TouchableHighlight
                   onPress={() => {
-                    navigation.navigate("PetForm", { data });
+                    navigation.navigate("PetForm", { selectedPet });
                   }}
                 >
                   <MaterialCommunityIcons name="pencil" size={26} color={font.pink.color} />
@@ -93,27 +106,27 @@ const EditPetScreen = ({ route, navigation }) => {
             <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between", alignItems: "center", marginTop: 35, marginBottom: 10 }}>
               <View style={styles.box}>
                 <Text style={styles.subtitle}>Age</Text>
-                <Text style={[styles.subtitleText, { marginTop: 5, textAlign: "center" }]}>{data?.age} Months</Text>
+                <Text style={[styles.subtitleText, { marginTop: 5, textAlign: "center" }]}>{selectedPet?.age} Months</Text>
               </View>
               <View style={styles.box}>
                 <Text style={styles.subtitle}>Weight</Text>
-                <Text style={[styles.subtitleText, { marginTop: 5, textAlign: "center" }]}>{data?.weight} Kg</Text>
+                <Text style={[styles.subtitleText, { marginTop: 5, textAlign: "center" }]}>{selectedPet?.weight} Kg</Text>
               </View>
               <View style={styles.box}>
                 <Text style={styles.subtitle}>Gender</Text>
-                <Text style={[styles.subtitleText, { marginTop: 5, textAlign: "center" }]}>{data?.gender}</Text>
+                <Text style={[styles.subtitleText, { marginTop: 5, textAlign: "center" }]}>{selectedPet?.gender}</Text>
               </View>
             </View>
 
             <View style={{ width: "100%", flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}>
               <View style={{ width: viewWidth / 2 - 25, marginTop: 25 }}>
                 <Text style={styles.subtitle}>Breed</Text>
-                <Text style={styles.subtitleText}>{data?.breed}</Text>
+                <Text style={styles.subtitleText}>{selectedPet?.breed}</Text>
               </View>
               <View style={{ width: viewWidth / 2 - 25, marginTop: 25 }}>
                 <Text style={styles.subtitle}>Color</Text>
                 <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                  {data.color.map((char, index) => (
+                  {selectedPet?.colors?.split(",").map((char, index) => (
                     <View style={styles.bubble} key={index}>
                       <Text style={styles.bubbleText}>{char}</Text>
                     </View>
@@ -123,24 +136,28 @@ const EditPetScreen = ({ route, navigation }) => {
               <View style={{ width: viewWidth / 2 - 25, marginTop: 25 }}>
                 <Text style={styles.subtitle}>Character</Text>
                 <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                  {data.character.map((char, index) => (
-                    <View style={styles.bubble} key={index}>
-                      <Text style={styles.bubbleText}>{char}</Text>
-                    </View>
-                  ))}
+                  <View style={styles.bubble}>
+                    <Text style={styles.bubbleText}>{selectedPet.character1}</Text>
+                  </View>
+                  <View style={styles.bubble}>
+                    <Text style={styles.bubbleText}>{selectedPet.character2}</Text>
+                  </View>
+                  <View style={styles.bubble}>
+                    <Text style={styles.bubbleText}>{selectedPet.character3}</Text>
+                  </View>
                 </View>
               </View>
               <View style={{ width: viewWidth / 2 - 25, marginTop: 20 }}>
                 <Text style={styles.subtitle}>Likes</Text>
-                <Text style={styles.subtitleText}>{data?.likes}</Text>
+                <Text style={styles.subtitleText}>{selectedPet?.like}</Text>
               </View>
               <View style={{ width: viewWidth / 2 - 25, marginTop: 20 }}>
                 <Text style={styles.subtitle}>Dislikes</Text>
-                <Text style={styles.subtitleText}>{data?.dislikes}</Text>
+                <Text style={styles.subtitleText}>{selectedPet?.dislike}</Text>
               </View>
               <View style={{ width: viewWidth / 2 - 25, marginTop: 20 }}>
                 <Text style={styles.subtitle}>Address</Text>
-                <Text style={styles.subtitleText}>{data?.address}</Text>
+                <Text style={styles.subtitleText}>{selectedPet?.address}</Text>
               </View>
             </View>
           </View>

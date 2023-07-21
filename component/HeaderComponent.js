@@ -7,7 +7,7 @@ const HeaderLeft = () => {
   const navigation = useNavigation();
 
   return (
-    <TouchableHighlight style={{ backgroundColor: "#f0ae5e", borderRadius: 50, width: 30, height: 30, overflow: "hidden", alignItems: "center" }} onPress={() => navigation.openDrawer()}>
+    <TouchableHighlight style={{ backgroundColor: "#f0ae5e", borderRadius: 50, width: 30, height: 30, overflow: "hidden", alignItems: "center", marginLeft: 20 }} onPress={() => navigation.openDrawer()}>
       <Image source={require("../assets/images/default-profile.png")} resizeMode="cover" style={{ width: "100%", height: "100%", position: "absolute", bottom: -5 }}></Image>
     </TouchableHighlight>
   );
@@ -16,7 +16,7 @@ const HeaderLeft = () => {
 const HeaderRight = () => {
   const navigation = useNavigation();
 
-  return <Ionicons name="filter" size={30} color="#728DF6" onPress={() => navigation.getParent().openDrawer()} />;
+  return <Ionicons name="filter" size={30} style={{ marginRight: 20 }} color="#728DF6" onPress={() => navigation.getParent().openDrawer()} />;
 };
 
 export const HeaderTitle = () => {

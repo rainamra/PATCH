@@ -3,11 +3,11 @@ import React, { useLayoutEffect, useState } from "react";
 import { ScrollView, Text, TextInput, TouchableOpacity, View, StyleSheet } from "react-native";
 import { HeaderTitle } from "../component/HeaderComponent";
 import { font } from "../styles";
-import { addNewForum } from "../store/slices/forum";
+import { addNewForum } from "../store/slices/forumApi";
 import { useDispatch } from "../store";
 
 const ForumForm = ({ navigation }) => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -22,23 +22,23 @@ const ForumForm = ({ navigation }) => {
   const [forumTitle, setForumTitle] = useState("");
   const [forumBody, setForumBody] = useState("");
 
-  // const handleCreateForum = () => {
-  //   const values = {
-  //     category: "community",
-  //     title: "The Unconventional Habits of Cats and Dogs Revealed",
-  //     body: "Discover the intriguing and sometimes quirky habits of cats and dogs that keep their owners entertained and amazed. From playful antics to surprising behavior, these furry companions continue to surprise us. Share your favorite stories and experiences with your pets!",
-  //     user: {
-  //       uid: "UID-20230719185706",
-  //     },
-  //   };
+  const handleCreateForum = () => {
+    const values = {
+      category: "community",
+      title: forumTitle,
+      body: forumBody,
+      user: {
+        uid: "UID-20230719185706",
+      },
+    };
 
-  //   console.log("test create forum", values);
+    console.log("test create forum", values);
 
-  //   dispatch(addNewForum(values));
-  //   setForumTitle("");
-  //   setForumBody("");
-  //   navigation.goBack();
-  // };
+    dispatch(addNewForum(values));
+    setForumTitle("");
+    setForumBody("");
+    navigation.goBack();
+  };
 
   return (
     <View style={{ backgroundColor: "#fdfaf0", flex: 1, padding: 20 }}>
