@@ -1,16 +1,30 @@
 import { View, Text, Image, StyleSheet } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { USER_PET_PROFILES } from "../_mockApis/payload/userPet";
 import { font } from "../styles";
+import { useDispatch, useSelector } from "../store/configureStore";
+import { getPetsByUserId } from "../store/slices/userPetApi";
 
 const LeftDrawerContent = (props) => {
   const [focused, setFocused] = React.useState(0);
   const navigation = useNavigation();
   const [drawerWidth, setDrawerWidth] = useState(false);
+// 20230719185737
+  const user = "UID-20230719185653";
+  const uid = user;
+
+  useEffect(() => {
+    dispatch(getPetsByUserId(uid));
+  }, []);
+
+  const dispatch = useDispatch();
+  const { petsById } = useSelector((state) => state.userpet);
+
+  // console.log("pets: ", petsById);
 
   return (
     <View
@@ -26,31 +40,32 @@ const LeftDrawerContent = (props) => {
             <Image style={{ width: 32, height: 32 }} source={require("../assets/images/switch_logo.png")}></Image>
             <Text style={[{ marginLeft: 15 }, font.purple, font.h5, font.bold]}>Switch Account</Text>
           </View>
-          {USER_PET_PROFILES.pets.map((pet, index) => (
-            <View key={index} style={styles.itemWrapper}>
-              <DrawerItem
-                focused={focused === index}
-                onPress={() => {
-                  setFocused(index);
-                }}
-                style={styles.drawerItem}
-                activeBackgroundColor="#f0ae5e"
-                icon={({}) => <Image style={styles.icon} source={pet.photosUrl[0]}></Image>}
-                label={() => (
-                  <View style={[styles.contentWrapper, { width: drawerWidth * (58 / 100) }]}>
-                    <View style={{ height: "100%", paddingTop: 10 }}>
-                      <Text style={[{ color: focused === index ? font.light.color : font.purple.color }, font.extraBold, font.h5]}>{pet.name}</Text>
+          {petsById &&
+            petsById.map((pet, index) => (
+              <View key={index} style={styles.itemWrapper}>
+                <DrawerItem
+                  focused={focused === index}
+                  onPress={() => {
+                    setFocused(index);
+                  }}
+                  style={styles.drawerItem}
+                  activeBackgroundColor="#f0ae5e"
+                  icon={({}) => <Image style={styles.icon} source={{ uri: `data:image/jpg;base64,${pet?.imageDataList[0]}` }}></Image>}
+                  label={() => (
+                    <View style={[styles.contentWrapper, { width: drawerWidth * (58 / 100) }]}>
+                      <View style={{ height: "100%", paddingTop: 10 }}>
+                        <Text style={[{ color: focused === index ? font.light.color : font.purple.color }, font.extraBold, font.h5]}>{pet?.name}</Text>
+                      </View>
+                      <View style={{ height: "100%", justifyContent: "flex-end" }}>
+                        <TouchableHighlight style={{ backgroundColor: focused === index ? "#FDFAF0" : "#E68578", padding: 5, borderRadius: 25 }} onPress={() => navigation.navigate("Profile")}>
+                          <AntDesign name="right" size={18} color={focused === index ? "#E68578" : "#FDFAF0"} />
+                        </TouchableHighlight>
+                      </View>
                     </View>
-                    <View style={{ height: "100%", justifyContent: "flex-end" }}>
-                      <TouchableHighlight style={{ backgroundColor: focused === index ? "#FDFAF0" : "#E68578", padding: 5, borderRadius: 25 }} onPress={() => navigation.navigate("Profile")}>
-                        <AntDesign name="right" size={18} color={focused === index ? "#E68578" : "#FDFAF0"} />
-                      </TouchableHighlight>
-                    </View>
-                  </View>
-                )}
-              />
-            </View>
-          ))}
+                  )}
+                />
+              </View>
+            ))}
         </DrawerContentScrollView>
       )}
     </View>

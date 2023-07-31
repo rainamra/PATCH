@@ -9,8 +9,9 @@ import { AuthProvider } from "./hooks/useAuth";
 import StackNavigator from "./navigation/StackNavigator";
 import { Provider } from "react-redux";
 import { store, persister } from "./store/configureStore";
-import { PersistGate } from 'redux-persist/integration/react';
-// import context from "./context";
+import { PersistGate } from "redux-persist/integration/react";
+import { ApplicationProvider } from "@ui-kitten/components";
+import * as eva from "@eva-design/eva";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -47,17 +48,24 @@ export default function App() {
     return null;
   }
 
+  // console.log("store: ", store);
+  // console.log("store test: ", store.getState());
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persister}>
         <NavigationContainer onReady={onLayoutRootView}>
-          <AuthProvider>
-            <BottomSheetModalProvider>
-              {/* <BottomSheetModalProvider> */}
-              <StackNavigator />
-            </BottomSheetModalProvider>
-            {/* </BottomSheetModalProvider> */}
-          </AuthProvider>
+          {store && (
+            <AuthProvider>
+              <ApplicationProvider {...eva} theme={eva.light}>
+              <BottomSheetModalProvider>
+                {/* <BottomSheetModalProvider> */}
+                <StackNavigator />
+              </BottomSheetModalProvider>
+              {/* </BottomSheetModalProvider> */}
+              </ApplicationProvider>
+            </AuthProvider>
+          )}
         </NavigationContainer>
       </PersistGate>
     </Provider>

@@ -3,9 +3,14 @@ import React, { useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import { userLogin } from "../store/slices/authApi";
+import { useDispatch, useSelector } from "../store/configureStore";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const { token } = useSelector((state) => state.auth);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -25,6 +30,17 @@ const LoginScreen = () => {
     setShowPass((prev) => !prev);
   };
 
+  const handleSubmit = () => {
+    const values = {
+      email: email,
+      password: password,
+    };
+
+    console.log(values);
+
+    dispatch(userLogin(token, values));
+  };
+
   return (
     <View
       style={[
@@ -42,7 +58,7 @@ const LoginScreen = () => {
       </View>
       {/* Text input goes here */}
       <View style={{ flexDirection: "column", alignItems: "center", paddingTop: 30 }}>
-        <TextInput style={styles.input} onChangeText={onChangeEmail} value={email} placeholder="Email" keyboardType="text" placeholderTextColor="#f0ae5e"></TextInput>
+        <TextInput style={styles.input} onChangeText={onChangeEmail} value={email} placeholder="Email" keyboardType="email-address" placeholderTextColor="#f0ae5e"></TextInput>
         <View style={styles.input}>
           <TextInput onChangeText={onChangePassword} value={password} placeholder="Password" placeholderTextColor="#f0ae5e" style={{ color: "#f0ae5e" }} secureTextEntry={!showPass}></TextInput>
           <TouchableOpacity
@@ -56,7 +72,7 @@ const LoginScreen = () => {
         </View>
       </View>
       <View style={{ flexDirection: "column", alignItems: "center", paddingTop: 100 }}>
-        <TouchableOpacity style={[styles.button, { flexDirection: "row" }]}>
+        <TouchableOpacity style={[styles.button, { flexDirection: "row" }]} onPress={handleSubmit}>
           <View>
             <Text style={styles.text}>LOGIN</Text>
           </View>

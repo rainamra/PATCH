@@ -10,34 +10,31 @@ import { getMessageHistory, sendMessage } from "../store/slices/chatApi";
 import { font } from "../styles";
 
 const MessageScreen = ({ route, navigation }) => {
-  const { data } = route.params;
+  const { data, prevPage } = route.params;
   const [input, setInput] = useState("");
 
   const dispatch = useDispatch();
   const { messages } = useSelector((state) => state.chat);
+  const { currentPet, token } = useSelector((state) => state.auth);
 
-  const user = "PID-20230719201524";
-  const uid = user === data.pid1 ? data.pid1 : data.pid2;
-  const receiver = user !== data.pid1 ? data.pid1 : data.pid2;
-  const receiverData = user !== data.pet1.pid ? data.pet1 : data.pet2;
+  const pet = currentPet?.pid;
+  const pid = pet === data.pid1 ? data.pid1 : data.pid2;
+  const receiver = pet !== data.pid1 ? data.pid1 : data.pid2;
+  const receiverData = prevPage === "Matched" ? { pid: receiver, name: data.name } : pet !== data.pet1.pid ? data.pet1 : data.pet2;
 
   useEffect(() => {
-    dispatch(getMessageHistory(data?.pid1, data?.pid2));
+    dispatch(getMessageHistory(token, data?.pid1, data?.pid2));
   }, []);
 
   const handleSendMessage = () => {
     const values = {
-      pid1: uid,
+      pid1: pid,
       pid2: receiver,
       body: input,
     };
 
-    dispatch(sendMessage(values));
+    dispatch(sendMessage(token, values));
   };
-
-  // console.log("data: ", data);
-  // console.log("chat: ", messages);
-  // console.log("user: ", user, ", receiver: ", receiver);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -62,7 +59,7 @@ const MessageScreen = ({ route, navigation }) => {
             style={{ paddingHorizontal: 20, paddingBottom: 20 }}
             keyExtractor={(item, index) => index}
             // keyExtractor={(item) => item.id}
-            renderItem={({ item: message, index }) => (message.pid1 === uid ? <SenderMessage key={index} message={message.body} /> : <ReceiverMessage key={index} message={message.body} />)}
+            renderItem={({ item: message, index }) => (message.pid1 === pid ? <SenderMessage key={index} message={message.body} /> : <ReceiverMessage key={index} message={message.body} />)}
             // <ReceiverMessage key={index} message={message} />}
             // renderItem={({ item: message }) => (message.userId === user.user ? <SenderMessage key={message.id} message={message} /> : <ReceiverMessage key={message.id} message={message} />)}
           ></FlatList>

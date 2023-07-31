@@ -9,6 +9,8 @@ import { getPets } from "../store/slices/userPetApi";
 
 const ChatScreen = ({ navigation }) => {
   const [viewWidth, setViewWidth] = useState(false);
+  const [match, setMatch] = useState({});
+
   const [matchedModalIsOpen, setMatchedModalIsOpen] = useState(false);
 
   const matchedSheetModalRef = useRef(null);
@@ -16,14 +18,15 @@ const ChatScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { matches } = useSelector((state) => state.matchmaking);
   const { pets } = useSelector((state) => state.userpet);
+  const { currentUser, token } = useSelector((state) => state.auth);
 
-  const user = "PID-20230719201524";
-  const uid = user;
-  // const uid = user === data.pid1 ? data.pid1 : data.pid2;
-  // const receiver = uid !== data.pid1 ? data.pid1 : data.pid2;
+  const pet = currentUser.pid;
+  const pid = pet;
+  // const pid = user === data.pid1 ? data.pid1 : data.pid2;
+  // const receiver = pid !== data.pid1 ? data.pid1 : data.pid2;
 
   const getMatchingObjects = (data) => {
-    const matchingObjects = data.filter((item) => item.pid1 === uid || item.pid2 === uid);
+    const matchingObjects = data.filter((item) => item.pid1 === pid || item.pid2 === pid);
     return matchingObjects;
   };
 
@@ -37,14 +40,14 @@ const ChatScreen = ({ navigation }) => {
       const found1 = data2.find((obj2) => obj2.pid === obj1.pid1);
       if (found1) {
         // console.log("found1: ", found1);
-        obj1 = { ...obj1, pet1: { pid: obj1.pid1, name: found1.name } };
+        obj1 = { ...obj1, pet1: { pid: obj1.pid1, name: found1.name, imageDataList: found1.imageDataList } };
       }
 
       // Check if pid2 exists in data2
       const found2 = data2.find((obj2) => obj2.pid === obj1.pid2);
       if (found2) {
         // console.log("found2: ", found2);
-        obj1 = { ...obj1, pet2: { pid: obj1.pid2, name: found2.name } };
+        obj1 = { ...obj1, pet2: { pid: obj1.pid2, name: found2.name, imageDataList: found2.imageDataList } };
       }
 
       // console.log("obj1: ", obj1);
@@ -56,8 +59,8 @@ const ChatScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    dispatch(getMatches());
-    dispatch(getPets());
+    dispatch(getMatches(token));
+    dispatch(getPets(token));
   }, []);
 
   // console.log("pets: ", pets);
@@ -67,8 +70,9 @@ const ChatScreen = ({ navigation }) => {
 
   // console.log("matchData: ", matchData);
 
-  const handlePresentMatchedModal = () => {
+  const handlePresentMatchedModal = (match) => {
     matchedSheetModalRef.current?.present();
+    setMatch(match);
     setMatchedModalIsOpen(true);
   };
 
@@ -82,7 +86,7 @@ const ChatScreen = ({ navigation }) => {
       <View>
         <TouchableHighlight
           onPress={() => {
-            navigation.navigate("Message");
+            navigation.navigate("Message", { data: match });
             handleDismissMatchedModal();
           }}
           style={{ borderBottomColor: "rgba(0, 0, 0, 0.2)", borderBottomWidth: 0.5, paddingVertical: 10 }}
@@ -113,12 +117,11 @@ const ChatScreen = ({ navigation }) => {
           <ScrollView vertical={false} horizontal={true} showsHorizontalScrollIndicator={false}>
             <View style={{ flexDirection: "row", paddingHorizontal: 20 }}>
               {/* MATCHED LIST - NO CHAT HISTORY */}
-              {
-                matchData &&
+              {matchData &&
                 matchData.map((match, index) => (
-                  <TouchableHighlight key={index} style={[{ width: viewWidth / 5, height: viewWidth / 5 }, , styles.matchWrapper]} onPress={() => handlePresentMatchedModal()}>
+                  <TouchableHighlight key={index} style={[{ width: viewWidth / 5, height: viewWidth / 5, display: index === 1 || index === 0 && "none" }, styles.matchWrapper]} onPress={() => handlePresentMatchedModal(match)}>
                     <View style={styles.imageWrapper}>
-                      <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={styles.image}></Image>
+                      <Image source={{ uri: `data:image/jpg;base64,${pid !== match.pid1 ? match?.pet1?.imageDataList[0] : match?.pet2?.imageDataList[0]}` }} resizeMode={"cover"} style={styles.image}></Image>
                       {/* <Text>{match.pid1}</Text> */}
                     </View>
                   </TouchableHighlight>
@@ -129,19 +132,18 @@ const ChatScreen = ({ navigation }) => {
 
         {/* GET THE PHOTO AND DETAILS */}
         <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
-          {
-            matchData &&
+          {matchData &&
             matchData.map((match, index) => {
-              // console.log("match: ", match);
+              // console.log("match: ", match.imageDataList, match);
               return (
                 <TouchableHighlight key={index} style={{ marginBottom: 20 }} onPress={() => navigation.navigate("Message", { data: match })}>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <View style={styles.chatImageWrapper}>
-                      <Image source={require("../assets/images/sashi-1.jpeg")} resizeMode={"cover"} style={styles.image}></Image>
+                      <Image source={{ uri: `data:image/jpg;base64,${pid !== match.pid1 ? match?.pet1?.imageDataList[0] : match?.pet2?.imageDataList[0]}` }} resizeMode={"cover"} style={styles.image}></Image>
                     </View>
                     <View style={[styles.textWrapper, { width: viewWidth - 80 }]}>
                       <View style={{ height: "100%", paddingVertical: 10 }}>
-                        <Text style={styles.text1}>{uid !== match.pid1 ? match?.pet1?.name : match?.pet2?.name}</Text>
+                        <Text style={styles.text1}>{pid !== match.pid1 ? match?.pet1?.name : match?.pet2?.name}</Text>
                         <Text style={styles.text2}>Sent you a message</Text>
                       </View>
                       <View>

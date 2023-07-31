@@ -14,18 +14,19 @@ const EditPetScreen = ({ route, navigation }) => {
 
   const dispatch = useDispatch();
   const { selectedPet } = useSelector((state) => state.userpet);
+  const { token } = useSelector((state) => state.auth);
 
   const handleIndex = (index) => {
     setIndex(index);
   };
 
   useEffect(() => {
-    dispatch(getPetByPetId(pid));
+    dispatch(getPetByPetId(token, pid));
   }, []);
 
   // const colors = selectedPet.colors.split(",");
 
-  console.log("selectedPet: ", selectedPet);
+  // console.log("selectedPet: ", pid, selectedPet);
 
   return (
     <View style={[styles.container]}>
@@ -43,7 +44,7 @@ const EditPetScreen = ({ route, navigation }) => {
               {prevPage !== "Message" && (
                 <TouchableHighlight
                   onPress={() => {
-                    navigation.navigate("PetForm", { selectedPet });
+                    navigation.navigate("PetForm", { data: selectedPet });
                   }}
                 >
                   <MaterialCommunityIcons name="pencil" size={26} color={font.pink.color} />
@@ -51,28 +52,28 @@ const EditPetScreen = ({ route, navigation }) => {
               )}
             </View>
 
-            {viewWidth && (
+            {viewWidth && selectedPet && (
               <View>
                 <Carousel
                   style={{ borderRadius: 10 }}
                   loop
                   width={viewWidth - 40}
                   height={viewWidth * 0.6}
-                  data={data?.photosUrl}
+                  data={selectedPet?.imageDataList}
                   pagingEnabled={true}
                   onProgressChange={(_, absoluteProgress) => {
                     handleIndex(Math.round(absoluteProgress));
                   }}
                   renderItem={({ index }) => (
                     <View style={{ backgroundColor: "white", width: "100%", height: "100%" }}>
-                      <Image style={{ width: "100%", height: "100%" }} source={data.photosUrl[index]} />
+                      <Image style={{ width: "100%", height: "100%" }} source={{ uri: `data:image/jpg;base64,${selectedPet.imageDataList[index]}` }} />
                     </View>
                   )}
                 />
                 <View style={{ position: "absolute", bottom: 10, justifyContent: "center", alignItems: "center", width: "100%" }}>
                   <AnimatedDotsCarousel
                     style={{ display: "flex", position: "absolute", top: 50 }}
-                    length={data.photosUrl.length}
+                    length={selectedPet?.imageDataList.length}
                     currentIndex={index}
                     maxIndicators={4}
                     interpolateOpacityAndColor={true}

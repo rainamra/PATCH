@@ -1,10 +1,14 @@
 import { AntDesign, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import React, { useLayoutEffect, useState, useEffect, useRef } from "react";
-import { StyleSheet, Text, TextInput, TouchableHighlight, View, Image, Button, ScrollView } from "react-native";
-import { font } from "../styles";
+import { Input } from "@ui-kitten/components";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Image, ScrollView, StyleSheet, Text, TouchableHighlight, View, TextInput } from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
+import { animalType, catBreedTypes, catCharacter, catColorTypes, dogCharacter, dogColorTypes, genderType, dogBreedTypes } from "../assets/staticData";
 import BottomSheet from "../component/BottomSheet";
+import { HeaderTitle } from "../component/HeaderComponent";
+import { font } from "../styles";
 
 const imgDir = FileSystem.documentDirectory + "images/";
 
@@ -15,11 +19,11 @@ const ensureDirExists = async () => {
   }
 };
 
-const EditPetScreen = ({ route, navigation }) => {
+const PetFormScreen = ({ route, navigation }) => {
   const { data } = route.params;
   const [viewWidth, setViewWidth] = useState(false);
   const imageGap = 50;
-  const numPhotos = data?.photosUrl?.length;
+  const numPhotos = data?.imageDataList?.length;
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [bottomSheetIsOpen, setBottomSheetIsOpen] = useState(false);
@@ -27,6 +31,23 @@ const EditPetScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     loadImages();
+  }, []);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      headerShadowVisible: false,
+      headerStyle: { backgroundColor: "#fdfaf0" },
+      headerTitle: HeaderTitle,
+      headerRight: (props) => (
+        <View style={{ flexDirection: "row" }}>
+          <Text style={[font.primary, font.h6, font.medium]} onPress={() => {}}>
+            Save
+          </Text>
+        </View>
+      ),
+      headerLeft: (props) => <AntDesign name="leftcircle" size={25} color="#f0ae5e" onPress={navigation.goBack} {...props} />,
+    });
   }, []);
 
   const loadImages = async () => {
@@ -143,16 +164,30 @@ const EditPetScreen = ({ route, navigation }) => {
     );
   };
 
-  const [age, onChangeAge] = useState(data?.age);
-  const [weight, onChangeWeight] = useState(data?.weight);
-  const [breed, onChangeBreed] = useState(data?.breed);
-  const [color, onChangeColor] = useState(data?.color);
-  const [gender, onChangeGender] = useState(data?.gender);
-  const [character, onChangeCharacter] = useState(data?.character);
-  const [likes, onChangeLikes] = useState(data?.likes);
-  const [dislikes, onChangeDislikes] = useState(data?.dislikes);
-  const [address, onChangeAddress] = useState(data?.address);
+  const [name, onChangeName] = useState(data?.name);
+  const [age, onChangeAge] = useState(data?.age?.toString());
+  const [weight, onChangeWeight] = useState(data?.weight?.toString());
+  const [likes, onChangeLikes] = useState(data?.like);
+  const [dislikes, onChangeDislikes] = useState(data?.dislike);
   const [bio, onChangeBio] = useState(data?.bio);
+
+  const [typeOpen, setTypeOpen] = useState(false);
+  const [genderOpen, setGenderOpen] = useState(false);
+  const [charOpen, setCharOpen] = useState(false);
+  const [breedOpen, setBreedOpen] = useState(false);
+  const [colorOpen, setColorOpen] = useState(false);
+
+  const [character, setCharacter] = useState(null);
+  const [gender, onChangeGender] = useState(null);
+  const [type, onChangeType] = useState(null);
+  const [breed, onChangeBreed] = useState(null);
+  const [color, onChangeColor] = useState(null);
+
+  const [animalItems, setAnimalItems] = useState(animalType);
+  const [genderItems, setGenderItems] = useState(genderType);
+  const [charItems, setCharItems] = useState(type === "Cat" ? catCharacter : dogCharacter);
+  const [breedItems, setBreedItems] = useState(type === "Cat" ? catBreedTypes : dogBreedTypes);
+  const [colorItems, setColorItems] = useState(type === "Cat" ? catColorTypes : dogColorTypes);
 
   const bottomSheetModalRef = useRef(null);
 
@@ -174,11 +209,26 @@ const EditPetScreen = ({ route, navigation }) => {
   };
 
   return (
-    <ScrollView style={{ backgroundColor: "#fdfaf0" }}>
+    <ScrollView style={{ backgroundColor: "#fdfaf0" }} nestedScrollEnabled={true}>
       <View style={[styles.container]}>
         <View style={styles.titleWrapper}>
           <Text style={[font.h1, font.bold, font.brown]}>Name: </Text>
-          <TextInput style={[{ borderBottomColor: font.pink.color, borderBottomWidth: 2, flex: 1, marginRight: 10, color: font.brown.color }, font.h3, font.bold]} value={data?.name}></TextInput>
+          <Input
+            textStyle={[{ color: font.brown.color }, font.h3, font.bold]}
+            style={{
+              borderBottomColor: font.pink.color,
+              borderBottomWidth: 2,
+              flex: 1,
+              marginRight: 10,
+              backgroundColor: "transparent",
+              borderWidth: 0,
+              shadowColor: "transparent",
+              borderColor: "transparent",
+              outline: "none",
+            }}
+            value={name}
+            onChangeText={onChangeName}
+          ></Input>
           <MaterialCommunityIcons name="pencil" size={26} color={font.pink.color} />
         </View>
 
@@ -189,15 +239,24 @@ const EditPetScreen = ({ route, navigation }) => {
             setViewWidth(width);
           }}
         >
-          {data?.photosUrl?.map((url, index) => (
-            <TouchableHighlight
+          {data?.imageDataList?.map((url, index) => (
+            <View
               key={index}
-              onPress={() => {
-                handlePresentDeleteModalPress();
-              }}
+              // onPress={() => {
+              //   handlePresentDeleteModalPress();
+              // }}
             >
-              <Image source={url} style={{ width: viewWidth / (numPhotos + 1) + (imageGap * numPhotos) / (numPhotos + 1), height: 250, borderRadius: 10, marginLeft: index === 0 ? 0 : -imageGap }}></Image>
-            </TouchableHighlight>
+              <Image source={{ uri: `data:image/jpg;base64,${url}` }} style={{ width: viewWidth / (numPhotos + 1) + (imageGap * numPhotos) / (numPhotos + 1), height: 250, borderRadius: 10, marginLeft: index === 0 ? 0 : -imageGap }}></Image>
+              <AntDesign
+                name="delete"
+                size={24}
+                color="white"
+                onPress={() => {
+                  handlePresentDeleteModalPress();
+                }}
+                style={{ position: "absolute", bottom: 10, left: 10 }}
+              />
+            </View>
           ))}
           <TouchableHighlight
             onPress={() => {
@@ -225,43 +284,138 @@ const EditPetScreen = ({ route, navigation }) => {
           <View style={{ width: "100%" }}>
             <Text style={styles.subtitle}>Details</Text>
             <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}>
-              <TextInput style={styles.inputText} placeholder="Age" placeholderTextColor={font.brown.color} onChangeText={onChangeAge} value={age.toString()}></TextInput>
-              <TextInput style={styles.inputText} placeholder="Breed" placeholderTextColor={font.brown.color} onChangeText={onChangeBreed} value={breed}></TextInput>
-              <TextInput style={styles.inputText} placeholder="Weight" placeholderTextColor={font.brown.color} onChangeText={onChangeWeight} value={weight.toString()}></TextInput>
-              <TextInput style={styles.inputText} placeholder="Color" placeholderTextColor={font.brown.color} onChangeText={onChangeColor} value={color.toString()}></TextInput>
-              <TextInput style={styles.inputText} placeholder="Gender" placeholderTextColor={font.brown.color} onChangeText={onChangeGender} value={gender}></TextInput>
-              <TextInput style={styles.inputText} placeholder="Character" placeholderTextColor={font.brown.color} onChangeText={onChangeCharacter} value={character.toString()}></TextInput>
+              <View style={{ width: "45%", marginTop: 12 }}>
+                <Text style={[font.h6, font.medium, font.brown]}>Type</Text>
+                <DropDownPicker
+                  listMode="SCROLLVIEW"
+                  style={[styles.inputBox, { zIndex: 4 }]}
+                  textStyle={[styles.inputText, { zIndex: 4 }]}
+                  open={typeOpen}
+                  value={type}
+                  dropDownContainerStyle={{ borderColor: font.primary.color, borderWidth: 1, borderRadius: 10, backgroundColor: font.light.color }}
+                  items={animalItems}
+                  setOpen={setTypeOpen}
+                  setValue={onChangeType}
+                  setItems={setAnimalItems}
+                  zIndex={1000}
+                />
+              </View>
+              <View style={{ width: "45%", marginTop: 12 }}>
+                <Text style={[font.h6, font.medium, font.brown]}>Breed</Text>
+                <DropDownPicker
+                  listMode="SCROLLVIEW"
+                  style={styles.inputBox}
+                  textStyle={styles.inputText}
+                  dropDownContainerStyle={{ borderColor: font.primary.color, borderWidth: 1, borderRadius: 10, backgroundColor: font.light.color }}
+                  open={breedOpen}
+                  value={breed}
+                  items={breedItems}
+                  setOpen={setBreedOpen}
+                  setValue={onChangeBreed}
+                  setItems={setBreedItems}
+                  disabled={type === null}
+                />
+              </View>
+              <View style={{ width: "45%", marginTop: 12 }}>
+                <Text style={[font.h6, font.medium, font.brown]}>Age</Text>
+                <TextInput style={[styles.inputBox, {zIndex}]} textStyle={styles.inputText} placeholder="Age" placeholderTextColor={font.brown.color} onChangeText={onChangeAge} value={age}></TextInput>
+              </View>
+              <View style={{ width: "45%", marginTop: 12 }}>
+                <Text style={[font.h6, font.medium, font.brown]}>Weight</Text>
+                <Input style={styles.inputBox} textStyle={styles.inputText} placeholder="Weight" placeholderTextColor={font.brown.color} onChangeText={onChangeWeight} value={weight}></Input>
+              </View>
+              <View style={{ width: "45%", marginTop: 12 }}>
+                <Text style={[font.h6, font.medium, font.brown]}>Colors</Text>
+                <DropDownPicker
+                  multiple={true}
+                  min={0}
+                  max={3}
+                  listMode="SCROLLVIEW"
+                  labelStyle={styles.inputText}
+                  style={styles.inputBox}
+                  dropDownContainerStyle={{ borderColor: font.primary.color, borderWidth: 1, borderRadius: 10, backgroundColor: font.light.color }}
+                  textStyle={styles.inputText}
+                  open={colorOpen}
+                  value={color}
+                  items={colorItems}
+                  setOpen={setColorOpen}
+                  setValue={onChangeColor}
+                  setItems={setColorItems}
+                  mode="BADGE"
+                  disabled={type === null}
+                />
+              </View>
+              <View style={{ width: "45%", marginTop: 12 }}>
+                <Text style={[font.h6, font.medium, font.brown]}>Gender</Text>
+                <DropDownPicker
+                  listMode="SCROLLVIEW"
+                  labelStyle={styles.inputText}
+                  style={[styles.inputBox, { zIndex: 3 }]}
+                  dropDownContainerStyle={{ borderColor: font.primary.color, borderWidth: 1, borderRadius: 10, backgroundColor: font.light.color }}
+                  textStyle={styles.inputText}
+                  open={genderOpen}
+                  value={gender}
+                  items={genderItems}
+                  setOpen={setGenderOpen}
+                  setValue={onChangeGender}
+                  setItems={setGenderItems}
+                />
+              </View>
+              <View style={{ width: "45%", marginTop: 12 }}>
+                <Text style={[font.h6, font.medium, font.brown]}>Characters</Text>
+                <DropDownPicker
+                  multiple={true}
+                  min={0}
+                  max={3}
+                  listMode="SCROLLVIEW"
+                  style={styles.inputBox}
+                  textStyle={styles.inputText}
+                  open={charOpen}
+                  value={character}
+                  items={charItems}
+                  setOpen={setCharOpen}
+                  setValue={setCharacter}
+                  setItems={setCharItems}
+                  mode="BADGE"
+                  disabled={type === null}
+                />
+              </View>
             </View>
           </View>
-          <View style={{ width: "45%" }}>
+          <View style={{ width: "45%", marginTop: 12 }}>
             <Text style={styles.subtitle}>Bio</Text>
             <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}>
-              <TextInput style={[styles.inputText, { width: "100%" }]} placeholder="Type here" placeholderTextColor={font.brown.color} multiline numberOfLines={4} onChangeText={onChangeBio} value={bio}></TextInput>
+              <Input style={[styles.inputBox, { width: "100%" }]} textStyle={styles.inputText} placeholder="Type here" placeholderTextColor={font.brown.color} multiline numberOfLines={4} onChangeText={onChangeBio} value={bio}></Input>
             </View>
           </View>
-          <View style={{ width: "45%" }}>
+          <View style={{ width: "45%", marginTop: 12 }}>
             <Text style={styles.subtitle}>Likes</Text>
             <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}>
-              <TextInput style={[styles.inputText, { width: "100%" }]} placeholder="Type here" placeholderTextColor={font.brown.color} multiline numberOfLines={4} onChangeText={onChangeLikes} value={likes}></TextInput>
+              <Input style={[styles.inputBox, { width: "100%" }]} textStyle={styles.inputText} placeholder="Type here" placeholderTextColor={font.brown.color} multiline numberOfLines={4} onChangeText={onChangeLikes} value={likes}></Input>
             </View>
           </View>
-          <View style={{ width: "45%" }}>
+          <View style={{ width: "45%", marginTop: 12 }}>
             <Text style={styles.subtitle}>Dislikes</Text>
             <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}>
-              <TextInput style={[styles.inputText, { width: "100%" }]} placeholder="Type here" placeholderTextColor={font.brown.color} multiline numberOfLines={4} onChangeText={onChangeDislikes} value={dislikes}></TextInput>
+              <Input
+                style={[styles.inputBox, { width: "100%" }]}
+                textStyle={styles.inputText}
+                placeholder="Type here"
+                placeholderTextColor={font.brown.color}
+                multiline
+                numberOfLines={4}
+                onChangeText={onChangeDislikes}
+                value={dislikes}
+              ></Input>
             </View>
           </View>
-          <View style={{ width: "45%" }}>
+          <View style={{ width: "45%", marginTop: 12 }}>
             <Text style={styles.subtitle}>Address</Text>
-            <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}>
-              <TextInput style={[styles.inputText, { width: "100%" }]} placeholder="Type here" placeholderTextColor={font.brown.color} multiline numberOfLines={4} onChangeText={onChangeAddress} value={address}></TextInput>
-            </View>
+            <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}></View>
           </View>
         </View>
-        {/* <View style={{ display: bottomSheetIsOpen ? "flex" : "none", position: "absolute", height: "120%", width: "120%", backgroundColor: bottomSheetIsOpen && "black", top: 0, left: 0 }}> */}
         <BottomSheet snapPoints={["10%", "15%"]} refBottomSheet={bottomSheetModalRef} SheetContent={renderSheetContent} isOpen={bottomSheetIsOpen} toggleClose={() => setBottomSheetIsOpen(false)} />
         <BottomSheet snapPoints={["10%", "15%"]} refBottomSheet={deleteBottomSheetModalRef} SheetContent={renderDeleteSheetContent} isOpen={deleteModalIsOpen} toggleClose={() => setDeleteModalIsOpen(false)} />
-        {/* </View> */}
       </View>
     </ScrollView>
   );
@@ -276,20 +430,22 @@ const styles = StyleSheet.create({
   },
   titleWrapper: { flexDirection: "row", justifyContent: "space-between", width: "100%", alignItems: "baseline" },
   subtitle: [font.brown, font.h5, font.bold, { marginTop: 20 }],
-  inputText: [
-    {
-      width: "45%",
-      borderColor: font.primary.color,
-      borderWidth: 1,
-      borderRadius: 10,
-      paddingVertical: 8,
-      paddingHorizontal: 15,
-      marginTop: 12,
-      color: font.brown.color,
-    },
-    font.medium,
-    font.h6,
-  ],
+  inputBox: {
+    width: "100%",
+    borderColor: font.primary.color,
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: font.light.color,
+  },
+  listItem: {
+    width: "100%",
+    borderColor: font.primary.color,
+    borderTopWidth: 1,
+    // borderRadius: 10,
+    backgroundColor: font.light.color,
+  },
+  inputText: [{ color: font.brown.color }, font.medium, font.h6],
+  // textStyle={styles.inputText}
 });
 
-export default EditPetScreen;
+export default PetFormScreen;

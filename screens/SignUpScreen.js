@@ -1,11 +1,13 @@
-import { View, Text, ImageBackground, TouchableOpacity, StyleSheet, TextInput, Image } from "react-native";
-import React, { useLayoutEffect } from "react";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { AntDesign } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
+import React, { useLayoutEffect } from "react";
+import { Image, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useDispatch } from "../store/configureStore";
+import { userRegister } from "../store/slices/authApi";
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -27,8 +29,26 @@ const SignUpScreen = () => {
   const togglePass = () => {
     setShowPass((prev) => !prev);
   };
+
   const toggleConfirmPass = () => {
     setShowConfirmPass((prev) => !prev);
+  };
+
+  const handleSubmit = () => {
+    if (password === confirmPass) {
+      const values = {
+        name: userName,
+        email: email,
+        password: password,
+      };
+
+      console.log(values);
+
+      dispatch(userRegister(values));
+    }
+    else {
+      alert("Password and Confirm Password must be same");
+    }
   };
 
   return (
@@ -74,7 +94,7 @@ const SignUpScreen = () => {
         </View>
       </View>
       <View style={{ flexDirection: "column", alignItems: "center", paddingTop: 20 }}>
-        <TouchableOpacity style={[styles.button, { flexDirection: "row" }]}>
+        <TouchableOpacity style={[styles.button, { flexDirection: "row" }]} onPress={handleSubmit}>
           <View>
             <Text style={styles.text}>SIGN UP</Text>
           </View>

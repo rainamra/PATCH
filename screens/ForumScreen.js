@@ -7,7 +7,8 @@ import { HeaderTitle } from "../component/HeaderComponent";
 import { useDispatch, useSelector } from "../store/configureStore";
 import { addNewComment, addNewReply, getCommentsByForumId } from "../store/slices/forumApi";
 import { font } from "../styles";
-import { formatDate } from "../utils/dateUtils";
+import { formatDayDate } from "../utils/dateUtils";
+import { getUsers } from "../store/slices/userPetApi";
 
 const ForumScreen = ({ route, navigation }) => {
   const { data, liked, saved } = route.params;
@@ -18,13 +19,33 @@ const ForumScreen = ({ route, navigation }) => {
   const [cid, setCid] = useState(false);
 
   const { comments } = useSelector((state) => state.forum);
+  const { users } = useSelector((state) => state.userpet);
+  const { token } = useSelector((state) => state.auth);
 
   // console.log("data: ", data ," comments", comments);
 
   useEffect(() => {
-    dispatch(getCommentsByForumId(data.fid));
+    dispatch(getCommentsByForumId(token, data.fid));
+    dispatch(getUsers(token));
     // dispatch(getReplyByCommentId(data?.fid));
   }, []);
+
+  const addUserInfo = (data1, data2) => {
+    const updatedData = data1.map((obj1) => {
+      // Check if pid1 exists in data2
+      const found = data2.find((obj2) => obj2.uid === obj1.user.uid);
+      if (found) {
+        // console.log("found1: ", found);
+        obj1 = { ...obj1, user: { ...obj1.user, ...found } };
+      }
+
+      return obj1;
+    });
+
+    return updatedData;
+  };
+
+  const userCommentData = addUserInfo(comments, users);
 
   const sendComment = () => {
     // console.log("test add comment");
@@ -32,13 +53,13 @@ const ForumScreen = ({ route, navigation }) => {
       content: input,
       fid: data.fid,
       user: {
-        uid: "UID-20230719185239",
-        name: "Rahmi Putri",
-        email: "rahmi_putri@gmail.com",
+        uid: "UID-20230719185653",
+        name: "Raissya Natta",
+        email: "raissya_natta@gmail.com",
       },
     };
 
-    dispatch(addNewComment(values));
+    dispatch(addNewComment(token, values));
     setInput("");
   };
 
@@ -55,12 +76,12 @@ const ForumScreen = ({ route, navigation }) => {
       cid: cid,
       user: {
         uid: "UID-20230719185649",
-        name: "Rakha Putra",
-        email: "rakha_putra@gmail.com",
+        name: "Vincent Alden",
+        email: "vincent_alden@gmail.com",
       },
     };
 
-    dispatch(addNewReply(values));
+    dispatch(addNewReply(token, values));
     setCid(false);
     setReplyInput("");
   };
@@ -100,24 +121,25 @@ const ForumScreen = ({ route, navigation }) => {
         >
           <ScrollView style={{ padding: 20 }}>
             <View style={styles.forumWrapper}>
-              <View style={[styles.contentWrapper, { borderBottomWidth: comments?.length > 0 && 1, marginBottom: comments?.length > 0 && 20 }]}>
+              <View style={[styles.contentWrapper, { borderBottomWidth: userCommentData?.length > 0 && 1, marginBottom: userCommentData?.length > 0 && 20 }]}>
                 <Text style={styles.title}>{data.title}</Text>
                 <Text style={styles.desc}>
-                  {data.user.name} - {formatDate(data.createdDate)}
+                  {data.user.name} - {formatDayDate(data.createdDate)}
                 </Text>
                 <Text style={styles.body}>{data.body}</Text>
               </View>
-              {comments?.length > 0 &&
-                comments?.map((comment, index) => (
+
+              {userCommentData?.length > 0 &&
+                userCommentData?.map((comment, index) => (
                   <View key={index} style={{ paddingBottom: 20, paddingHorizontal: 20 }}>
                     {/* box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25); */}
                     <View style={styles.commentBox}>
                       <View style={styles.headerWrapper}>
                         <View style={styles.image}>
-                          <Image source={USER_PET_PROFILES.user.profileUrl} resizeMode={"cover"} style={{ width: "100%", height: "100%" }}></Image>
+                          <Image source={{ uri: `data:image/jpg;base64,${comment?.user?.profileImage}` }} resizeMode={"cover"} style={{ width: "100%", height: "100%" }}></Image>
                         </View>
                         <Text style={styles.timeText}>
-                          {comment?.user?.name} - {formatDate(comment.dateCreated)}
+                          {comment?.user?.name} - {formatDayDate(comment.dateCreated)}
                         </Text>
                       </View>
                       <Text style={styles.contentText}>{comment?.content}</Text>
@@ -128,7 +150,7 @@ const ForumScreen = ({ route, navigation }) => {
                         </View>
                       </TouchableHighlight>
 
-                      {comment?.replies > 0 &&
+                      {/* {comment?.replies > 0 &&
                         comment?.replies.map((reply) => (
                           <View key={index} style={styles.replyBox}>
                             <View style={styles.headerWrapper}>
@@ -136,18 +158,21 @@ const ForumScreen = ({ route, navigation }) => {
                                 <Image source={USER_PET_PROFILES.user.profileUrl} resizeMode={"cover"} style={{ width: "100%", height: "100%" }}></Image>
                               </View>
                               <Text style={styles.timeText}>
-                                {reply?.user?.name} - {formatDate(reply?.dateCreated)}
+                                {reply?.user?.name} - {formatDayDate(reply?.dateCreated)}
                               </Text>
                             </View>
                             <Text style={styles.contentText}>{reply?.content}</Text>
-                            {/* <TouchableHighlight style={{ alignSelf: "flex-end", marginLeft: "auto" }}>
-                              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                <Ionicons name="arrow-undo-outline" size={16} color="rgba(156, 92, 43, 0.67)" />
-                                <Text style={styles.replyText}>Reply</Text>
-                              </View>
-                            </TouchableHighlight> */}
                           </View>
-                        ))}
+                        ))} */}
+                      <View key={index} style={styles.replyBox}>
+                        <View style={styles.headerWrapper}>
+                          <View style={styles.image}>
+                            <Image source={require("../assets/images/vincent-alden-avatar.jpg")} resizeMode={"cover"} style={{ width: "100%", height: "100%" }}></Image>
+                          </View>
+                          <Text style={styles.timeText}>Vincent Alden - Sunday, 23/07/2023</Text>
+                        </View>
+                        <Text style={styles.contentText}>I never knew dogs could be such clowns! My pup's antics always brighten my day. Do your pets have any funny habits that make you smile?</Text>
+                      </View>
                     </View>
                   </View>
                 ))}

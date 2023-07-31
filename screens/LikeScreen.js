@@ -1,9 +1,9 @@
 import { View, Text, StyleSheet, Image, ScrollView, TouchableHighlight } from "react-native";
 import React, { useState } from "react";
-import { LIKE_PET_PROFILES, USER_PET_PROFILES } from "../_mockApis/payload/userPet";
+import { LIKE_PET_PROFILES, USER_PET_PROFILES, PET_PROFILES } from "../_mockApis/payload/userPet";
 import { font } from "../styles";
 
-const LikeScreen = () => {
+const LikeScreen = ({ navigation }) => {
   const [scrollHeight, setScrollHeight] = useState(false);
   return (
     <View style={[styles.container]}>
@@ -13,9 +13,9 @@ const LikeScreen = () => {
           <Image source={require("../assets/images/eyes.png")}></Image>
         </View>
         <View style={styles.petProfileAvatar}>
-          <Image source={USER_PET_PROFILES.pets[1].photosUrl[0]} resizeMode={"cover"} style={styles.image}></Image>
+          <Image source={PET_PROFILES[1].pet.photosUrl[0]} resizeMode={"cover"} style={styles.image}></Image>
         </View>
-        <Text style={styles.petProfileName}>{USER_PET_PROFILES.pets[1].name}</Text>
+        <Text style={styles.petProfileName}>Mumu</Text>
       </View>
 
       <ScrollView
@@ -29,7 +29,7 @@ const LikeScreen = () => {
         <View style={styles.cardWrapper}>
           {LIKE_PET_PROFILES.length > 0 &&
             LIKE_PET_PROFILES.map((pet, index) => (
-              <TouchableHighlight key={index} style={[styles.card, { height: (scrollHeight - 70) / 2 }]} onPress={() => {}}>
+              <TouchableHighlight key={index} style={[styles.card, { height: (scrollHeight - 70) / 2 }]} onPress={() => navigation.navigate("LikeSwiper", { data: [pet] })}>
                 <View>
                   <Image source={pet.photosUrl[0]} resizeMode={"cover"} style={styles.image}></Image>
                   <Text style={styles.petName}>{pet.name}</Text>

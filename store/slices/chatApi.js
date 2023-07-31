@@ -6,10 +6,10 @@ import { slice } from "./chat";
 
 const URL = chatUrl;
 
-export function getMessageHistory(pid1, pid2) {
+export function getMessageHistory(bearerToken, pid1, pid2) {
   return async () => {
     try {
-      const response = await axios.get(`${URL}/history?pid1=${pid1}&pid2=${pid2}`);
+      const response = await axios.get(`${URL}/history?pid1=${pid1}&pid2=${pid2}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       // console.log("response forums", response.data);
       dispatch(slice.actions.getMessageHistorySuccess(response.data));
       // const response = await mockAxios.get("/api/forum");
@@ -20,10 +20,10 @@ export function getMessageHistory(pid1, pid2) {
   };
 }
 
-export function getMessageById(id) {
+export function getMessageById(bearerToken, id) {
   return async () => {
     try {
-      const response = await axios.get(`${URL}/${id}`);
+      const response = await axios.get(`${URL}/${id}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       console.log("response message by id", response.data);
       // const response = await mockAxios.get("/api/forum");
       dispatch(slice.actions.getMessageByIdSuccess(response.data));
@@ -34,11 +34,12 @@ export function getMessageById(id) {
   };
 }
 
-export function updateMessage(values) {
+export function updateMessage(bearerToken, values) {
   return async () => {
     await axios
       .put(`${URL}/${values.msid}`, {
         ...values,
+        headers: { Authorization: `Bearer ${bearerToken}` },
       })
       .then((res) => {
         // showSnackBar(`${res.data.error_schema.error_message.english} update member`, "info");
@@ -52,10 +53,10 @@ export function updateMessage(values) {
   };
 }
 
-export function deleteMessage(messageId, pid1, pid2) {
+export function deleteMessage(bearerToken, messageId, pid1, pid2) {
   return async () => {
     try {
-      const response = await axios.delete(`${URL}/${messageId}`);
+      const response = await axios.delete(`${URL}/${messageId}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       // handleClose();
       dispatch(getMessageHistory(pid1, pid2));
     } catch (error) {
@@ -65,12 +66,12 @@ export function deleteMessage(messageId, pid1, pid2) {
   };
 }
 
-
-export function sendMessage(values) {
+export function sendMessage(bearerToken, values) {
   return async () => {
     await axios
       .post(`${URL}/send`, {
         ...values,
+        headers: { Authorization: `Bearer ${bearerToken}` },
       })
       .then((res) => {
         // showSnackBar(`${res.data.error_schema.error_message.english} add member`, "info");

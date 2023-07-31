@@ -6,6 +6,7 @@ const initialState = {
   error: null,
   users: [],
   pets: [],
+  petsById: null,
   selectedUser: false,
   selectedPet: false,
   filter: {},
@@ -45,6 +46,11 @@ export const slice = createSlice({
     getPetByIdSuccess(state, action) {
       const payload = action.payload;
       state.selectedPet = payload;
+    },
+
+    getPetsByIdSuccess(state, action) {
+      const payload = action.payload;
+      state.petsById = payload;
     },
 
     getUserByIdSuccess(state, action) {

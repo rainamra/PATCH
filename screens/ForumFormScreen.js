@@ -4,10 +4,11 @@ import { ScrollView, Text, TextInput, TouchableOpacity, View, StyleSheet } from 
 import { HeaderTitle } from "../component/HeaderComponent";
 import { font } from "../styles";
 import { addNewForum } from "../store/slices/forumApi";
-import { useDispatch } from "../store";
+import { useDispatch, useSelector } from "../store/configureStore";
 
 const ForumForm = ({ navigation }) => {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const { token, currentUser } = useSelector((state) => state.auth);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -28,13 +29,13 @@ const ForumForm = ({ navigation }) => {
       title: forumTitle,
       body: forumBody,
       user: {
-        uid: "UID-20230719185706",
+        uid: currentUser.uid,
       },
     };
 
     console.log("test create forum", values);
 
-    dispatch(addNewForum(values));
+    dispatch(addNewForum(token, values));
     setForumTitle("");
     setForumBody("");
     navigation.goBack();

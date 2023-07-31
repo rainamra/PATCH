@@ -11,6 +11,7 @@ import userPetReducer from "./slices/userPet";
 import matchmakingReducer from "./slices/matchmaking";
 import forumReducer from "./slices/forum";
 import chatReducer from "./slices/chat";
+import authReducer from "./slices/auth";
 
 const reducer = combineReducers({
   root: persistReducer(
@@ -24,6 +25,7 @@ const reducer = combineReducers({
   userpet: userPetReducer,
   matchmaking: matchmakingReducer,
   chat: chatReducer,
+  auth: authReducer,
 });
 
 const store = configureStore({

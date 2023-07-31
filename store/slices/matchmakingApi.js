@@ -6,10 +6,10 @@ import { slice } from "./matchmaking";
 
 const URL = matchMakingUrl;
 
-export function getLikesDislikes() {
+export function getLikesDislikes(bearerToken) {
   return async () => {
     try {
-      const response = await axios.get(`${URL}/likedislike`);
+      const response = await axios.get(`${URL}/likedislike`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       console.log("response likes dislikes", response.data);
       dispatch(slice.actions.getLikesDislikes(response.data));
       // const response = await mockAxios.get("/api/like");
@@ -20,10 +20,10 @@ export function getLikesDislikes() {
   };
 }
 
-export function getMatches() {
+export function getMatches(bearerToken) {
   return async () => {
     try {
-      const response = await axios.get(`${URL}/matchhistories`);
+      const response = await axios.get(`${URL}/matchhistories`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       // console.log("response matches ", response.data);
       dispatch(slice.actions.getMatchesSuccess(response.data));
     } catch (error) {
@@ -33,10 +33,10 @@ export function getMatches() {
   };
 }
 
-export function getLikesByPid(id) {
+export function getLikesByPid(bearerToken, id) {
   return async () => {
     try {
-      const response = await axios.get(`${URL}/likedislike/pet/${id}`);
+      const response = await axios.get(`${URL}/likedislike/pet/${id}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       console.log("response like by pid", response.data);
       // const response = await mockAxios.get("/api/like");
       dispatch(slice.actions.getLikesByIdSuccess(response.data));
@@ -47,10 +47,10 @@ export function getLikesByPid(id) {
   };
 }
 
-export function getLikeDislikeById(id) {
+export function getLikeDislikeById(bearerToken, id) {
   return async () => {
     try {
-      const response = await axios.get(`${URL}/likedislike/${id}`);
+      const response = await axios.get(`${URL}/likedislike/${id}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       dispatch(slice.actions.getLikeDislikeByIdSuccess(response.data));
     } catch (error) {
       console.log("error muncul ", error);
@@ -59,10 +59,10 @@ export function getLikeDislikeById(id) {
   };
 }
 
-export function getMatchByMatchId(id) {
+export function getMatchByMatchId(bearerToken, id) {
   return async () => {
     try {
-      const response = await axios.get(`${URL}/matchhistories/${id}`);
+      const response = await axios.get(`${URL}/matchhistories/${id}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       dispatch(slice.actions.getMatchByIdSuccess(response.data));
     } catch (error) {
       console.log("error muncul ", error);
@@ -85,16 +85,15 @@ export function getMatchByMatchId(id) {
 //   };
 // }
 
-export function sendLikeDislike(values) {
+export function sendLikeDislike(bearerToken, values) {
   return async () => {
     await axios
-      .post(URL, {
+      .post(`${URL}/likedislike`, {
         ...values,
+        headers: { Authorization: `Bearer ${bearerToken}` },
       })
-      .then((res) => {
-        // showSnackBar(`${res.data.error_schema.error_message.english} update member`, "info");
-        // handleClose();
-        dispatch(getLikesByPid(values.pid1));
+      .then(() => {
+        dispatch(getMatches());
       })
       .catch((err) => {
         // showSnackBar(err.response.data.error_schema.error_message.english, "error");
@@ -103,10 +102,10 @@ export function sendLikeDislike(values) {
   };
 }
 
-export function deleteLike(id, petId) {
+export function deleteLike(bearerToken, id, petId) {
   return async () => {
     try {
-      const response = await axios.delete(`${URL}/likedislike/${id}`);
+      const response = await axios.delete(`${URL}/likedislike/${id}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       // handleClose();
       dispatch(getLikesByPid(petId));
     } catch (error) {
@@ -116,12 +115,12 @@ export function deleteLike(id, petId) {
   };
 }
 
-export function deleteMatch(matchId, petId) {
+export function deleteMatch(bearerToken, matchId, petId) {
   return async () => {
     try {
-      const response = await axios.delete(`${URL}/matchhistories/${matchId}`);
+      const response = await axios.delete(`${URL}/matchhistories/${matchId}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       // handleClose();
-    //   dispatch(getMatchesByPid(petId));
+      //   dispatch(getMatchesByPid(petId));
     } catch (error) {
       // showSnackBar(error.response.data.error_schema.error_message.english, "error");
       dispatch(slice.actions.hasError(error));

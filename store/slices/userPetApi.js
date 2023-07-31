@@ -1,46 +1,47 @@
 import axios from "axios";
-import { dispatch } from "../configureStore";
 import "../../_mockApis";
+import { dispatch } from "../configureStore";
 import { userPetUrl } from "../servicesUrl";
 import { slice } from "./userPet";
 
 const URL = userPetUrl;
 
-export function getUsers() {
+export function getUsers(bearerToken) {
   return async () => {
     try {
-      const response = await axios.get(URL);
-      console.log("response users", response.data);
+      const response = await axios.get(URL, { headers: { Authorization: `Bearer ${bearerToken}` } });
+      // console.log("response users", response.data);
       dispatch(slice.actions.getUserSuccess(response.data));
       // const response = await mockAxios.get("/api/user");
     } catch (error) {
-      console.log("error muncul ", error);
+      console.log("error muncul users", error);
       dispatch(slice.actions.hasError(error));
     }
   };
 }
 
-export function getPets() {
+export function getPets(bearerToken) {
   return async () => {
     try {
-      const response = await axios.get(`${URL}/pets`);
+      const response = await axios.get(`${URL}/pets`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       // console.log("response pets", response.data);
       dispatch(slice.actions.getPetSuccess(response.data));
       // const response = await mockAxios.get("/api/user");
     } catch (error) {
-      console.log("error muncul ", error);
+      console.log("error muncul test", error);
       dispatch(slice.actions.hasError(error));
     }
   };
 }
 
-export function getPetsByUserId(id) {
+export function getPetsByUserId(bearerToken, id) {
   return async () => {
     try {
-      const response = await axios.get(`${URL}/${id}/pet`);
-      console.log("response pets by user id", response.data);
+      const response = await axios.get(`${URL}/${id}/pet`, { headers: { Authorization: `Bearer ${bearerToken}` } });
+      // console.log("response pets by user id", response.data);
       // const response = await mockAxios.get("/api/user");
-      dispatch(slice.actions.getPetSuccess(response.data));
+      dispatch(slice.actions.getPetsByIdSuccess(response.data));
+
     } catch (error) {
       console.log("error muncul ", error);
       dispatch(slice.actions.hasError(error));
@@ -48,10 +49,10 @@ export function getPetsByUserId(id) {
   };
 }
 
-export function getUserByUserId(id) {
+export function getUserByUserId(bearerToken, id) {
   return async () => {
     try {
-      const response = await axios.get(`${URL}/${id}`);
+      const response = await axios.get(`${URL}/${id}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       dispatch(slice.actions.getUserByIdSuccess(response.data));
     } catch (error) {
       console.log("error muncul ", error);
@@ -60,10 +61,10 @@ export function getUserByUserId(id) {
   };
 }
 
-export function getPetByPetId(id) {
+export function getPetByPetId(bearerToken, id) {
   return async () => {
     try {
-      const response = await axios.get(`${URL}/pet/${id}`);
+      const response = await axios.get(`${URL}/pet/${id}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       dispatch(slice.actions.getPetByIdSuccess(response.data));
     } catch (error) {
       console.log("error muncul ", error);
@@ -72,11 +73,12 @@ export function getPetByPetId(id) {
   };
 }
 
-export function updateUser(values) {
+export function updateUser(bearerToken, values) {
   return async () => {
     await axios
       .put(URL, {
         ...values,
+        headers: { Authorization: `Bearer ${bearerToken}` },
       })
       .then((res) => {
         // showSnackBar(`${res.data.error_schema.error_message.english} update member`, "info");
@@ -91,10 +93,10 @@ export function updateUser(values) {
   };
 }
 
-export function deleteUser(id) {
+export function deleteUser(bearerToken, id) {
   return async () => {
     try {
-      const response = await axios.delete(`${URL}/${id}`);
+      const response = await axios.delete(`${URL}/${id}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       // handleClose();
       dispatch(getUsers());
     } catch (error) {
@@ -104,11 +106,12 @@ export function deleteUser(id) {
   };
 }
 
-export function updatePet(values) {
+export function updatePet(bearerToken, values) {
   return async () => {
     await axios
       .put(`${URL}/pet`, {
         ...values,
+        headers: { Authorization: `Bearer ${bearerToken}` },
       })
       .then((res) => {
         // showSnackBar(`${res.data.error_schema.error_message.english} update member`, "info");
@@ -123,10 +126,10 @@ export function updatePet(values) {
   };
 }
 
-export function deletePet(userId, petId) {
+export function deletePet(bearerToken, userId, petId) {
   return async () => {
     try {
-      const response = await axios.delete(`${URL}/pet/${petId}`);
+      const response = await axios.delete(`${URL}/pet/${petId}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       // handleClose();
       dispatch(getPetsByUserId(userId));
     } catch (error) {
@@ -136,29 +139,12 @@ export function deletePet(userId, petId) {
   };
 }
 
-export function registerUser(values) {
-  return async () => {
-    await axios
-      .post(`${URL}/register`, {
-        ...values,
-      })
-      .then((res) => {
-        // showSnackBar(`${res.data.error_schema.error_message.english} add member`, "info");
-        // handleClose();
-        dispatch(getUsers());
-      })
-      .catch((err) => {
-        // showSnackBar(err.response.data.error_schema.error_message.english, "error");
-        dispatch(slice.actions.hasError(err));
-      });
-  };
-}
-
-export function addNewPet(values) {
+export function addNewPet(bearerToken, values) {
   return async () => {
     await axios
       .post(`${URL}/pet`, {
         ...values,
+        headers: { Authorization: `Bearer ${bearerToken}` },
       })
       .then((res) => {
         // showSnackBar(`${res.data.error_schema.error_message.english} add member`, "info");
@@ -171,14 +157,3 @@ export function addNewPet(values) {
       });
   };
 }
-
-// export function getPets() {
-//   return async () => {
-//     try {
-//       const response = await mockAxios.get("/api/user/pet");
-//       dispatch(slice.actions.getPetSuccess(response.data));
-//     } catch (error) {
-//       dispatch(slice.actions.hasError(error));
-//     }
-//   };
-// }

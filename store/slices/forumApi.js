@@ -7,10 +7,10 @@ import { slice } from "./forum";
 const URL = forumUrl;
 const MarkedURL = markedURL;
 
-export function getForums() {
+export function getForums(bearerToken) {
   return async () => {
     try {
-      const response = await axios.get(URL);
+      const response = await axios.get(URL, { headers: { Authorization: `Bearer ${bearerToken}` } });
       // console.log("response forums", response.data);
       dispatch(slice.actions.getForumSuccess(response.data));
       // const response = await mockAxios.get("/api/forum");
@@ -21,10 +21,10 @@ export function getForums() {
   };
 }
 
-export function getCommentsByForumId(id) {
+export function getCommentsByForumId(bearerToken, id) {
   return async () => {
     try {
-      const response = await axios.get(`${URL}/comment/${id}`);
+      const response = await axios.get(`${URL}/comment/${id}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       // console.log("response comments by forum id", response.data);
       // const response = await mockAxios.get("/api/forum");
       dispatch(slice.actions.getCommentSuccess(response.data));
@@ -35,10 +35,10 @@ export function getCommentsByForumId(id) {
   };
 }
 
-export function getForumByForumId(id) {
+export function getForumByForumId(bearerToken, id) {
   return async () => {
     try {
-      const response = await axios.get(`${URL}/${id}`);
+      const response = await axios.get(`${URL}/${id}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       dispatch(slice.actions.getForumByIdSuccess(response.data));
     } catch (error) {
       console.log("error muncul ", error);
@@ -47,10 +47,10 @@ export function getForumByForumId(id) {
   };
 }
 
-export function getCommentByCommentId(id) {
+export function getCommentByCommentId(bearerToken, id) {
   return async () => {
     try {
-      const response = await axios.get(`${URL}/comment/by-cid/${id}`);
+      const response = await axios.get(`${URL}/comment/by-cid/${id}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       dispatch(slice.actions.getCommentByIdSuccess(response.data));
     } catch (error) {
       console.log("error muncul ", error);
@@ -59,11 +59,12 @@ export function getCommentByCommentId(id) {
   };
 }
 
-export function updateForum(values) {
+export function updateForum(bearerToken, values) {
   return async () => {
     await axios
       .put(URL, {
         ...values,
+        headers: { Authorization: `Bearer ${bearerToken}` },
       })
       .then((res) => {
         // showSnackBar(`${res.data.error_schema.error_message.english} update member`, "info");
@@ -78,10 +79,10 @@ export function updateForum(values) {
   };
 }
 
-export function deleteForum(id) {
+export function deleteForum(bearerToken, id) {
   return async () => {
     try {
-      const response = await axios.delete(`${URL}/${id}`);
+      const response = await axios.delete(`${URL}/${id}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       // handleClose();
       dispatch(getForums());
     } catch (error) {
@@ -91,10 +92,10 @@ export function deleteForum(id) {
   };
 }
 
-export function deleteComment(forumId, commentId) {
+export function deleteComment(bearerToken, forumId, commentId) {
   return async () => {
     try {
-      const response = await axios.delete(`${URL}/comment/${commentId}`);
+      const response = await axios.delete(`${URL}/comment/${commentId}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       // handleClose();
       dispatch(getCommentsByForumId(forumId));
     } catch (error) {
@@ -104,7 +105,7 @@ export function deleteComment(forumId, commentId) {
   };
 }
 
-export function addNewForum(values) {
+export function addNewForum(bearerToken, values) {
   return async () => {
     await axios
       .post(`${URL}`, {
@@ -122,12 +123,13 @@ export function addNewForum(values) {
   };
 }
 
-export function addNewComment(values) {
+export function addNewComment(bearerToken, values) {
   // console.log("values add comment: ", values);
   return async () => {
     await axios
       .post(`${URL}/comment`, {
         ...values,
+        headers: { Authorization: `Bearer ${bearerToken}` },
       })
       .then((res) => {
         // showSnackBar(`${res.data.error_schema.error_message.english} add member`, "info");
@@ -142,10 +144,10 @@ export function addNewComment(values) {
   };
 }
 
-export function getReplyByCommentId(commentId) {
+export function getReplyByCommentId(bearerToken, commentId) {
   return async () => {
     try {
-      const response = await axios.get(`${URL}/reply/by-cid/${commentId}`);
+      const response = await axios.get(`${URL}/reply/by-cid/${commentId}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       dispatch(slice.actions.getReplyByCommentIdSuccess(response.data));
     } catch (error) {
       console.log("error muncul ", error);
@@ -154,11 +156,12 @@ export function getReplyByCommentId(commentId) {
   };
 }
 
-export function addNewReply(values) {
+export function addNewReply(bearerToken, values) {
   return async () => {
     await axios
       .post(`${URL}/reply`, {
         ...values,
+        headers: { Authorization: `Bearer ${bearerToken}` },
       })
       .then((res) => {
         // showSnackBar(`${res.data.error_schema.error_message.english} add member`, "info");
@@ -172,10 +175,31 @@ export function addNewReply(values) {
   };
 }
 
-export function deleteReply(forumId, replyId) {
+export function sendLikeSave(bearerToken, values) {
+  return async () => {
+    await axios
+      .post(`${MarkedURL}/users/${values.uid}/marked-forums`, {
+        ...values,
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
+      .then((res) => {
+        // showSnackBar(`${res.data.error_schema.error_message.english} add member`, "info");
+        // handleClose();
+        console.log("res like save: ", res);
+        // gimn cara biar bisa refresh yg di depan
+        dispatch(getForums());
+      })
+      .catch((err) => {
+        // showSnackBar(err.response.data.error_schema.error_message.english, "error");
+        dispatch(slice.actions.hasError(err));
+      });
+  };
+}
+
+export function deleteReply(bearerToken, forumId, replyId) {
   return async () => {
     try {
-      const response = await axios.delete(`${URL}/reply/${replyId}`);
+      const response = await axios.delete(`${URL}/reply/${replyId}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       // handleClose();
       dispatch(getCommentsByForumId(forumId));
     } catch (error) {
@@ -185,10 +209,10 @@ export function deleteReply(forumId, replyId) {
   };
 }
 
-export function getSavedForumsByUid(id) {
+export function getSavedForumsByUid(bearerToken, id) {
   return async () => {
     try {
-      const response = await axios.get(`${MarkedURL}/saved-forums/${id}`);
+      const response = await axios.get(`${MarkedURL}/saved-forums/${id}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       // console.log("response saved forums by uid", response.data);
       // const response = await mockAxios.get("/api/forum");
       dispatch(slice.actions.getSavedForumSuccess(response.data));
@@ -199,10 +223,10 @@ export function getSavedForumsByUid(id) {
   };
 }
 
-export function getLikedForumsByUid(id) {
+export function getLikedForumsByUid(bearerToken, id) {
   return async () => {
     try {
-      const response = await axios.get(`${MarkedURL}/liked-forums/${id}`);
+      const response = await axios.get(`${MarkedURL}/liked-forums/${id}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       // console.log("response liked forums by uid", response.data);
       // const response = await mockAxios.get("/api/forum");
       dispatch(slice.actions.getLikedForumSuccess(response.data));
