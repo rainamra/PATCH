@@ -1,30 +1,44 @@
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, ActivityIndicator } from "react-native";
 import React, { useState, useEffect } from "react";
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { USER_PET_PROFILES } from "../_mockApis/payload/userPet";
 import { font } from "../styles";
 import { useDispatch, useSelector } from "../store/configureStore";
 import { getPetsByUserId } from "../store/slices/userPetApi";
+import { selectCurrentPet } from "../store/slices/authApi";
 
 const LeftDrawerContent = (props) => {
-  const [focused, setFocused] = React.useState(0);
+  const dispatch = useDispatch();
+  const { petsById } = useSelector((state) => state.userpet);
+  const { token, currentUser, currentPet } = useSelector((state) => state.auth);
+
+  const [focused, setFocused] = useState(0);
   const navigation = useNavigation();
   const [drawerWidth, setDrawerWidth] = useState(false);
-// 20230719185737
-  const user = "UID-20230719185653";
+  const [isLoading, setIsLoading] = useState(true);
+
+  const user = currentUser?.uid;
   const uid = user;
 
   useEffect(() => {
-    dispatch(getPetsByUserId(uid));
-  }, []);
+    const loadData = async () => {
+      // Dispatch multiple actions and wait for them to complete
+      await Promise.all([dispatch(getPetsByUserId(token, uid))]);
+      const index = (petsById?.findIndex((item) => item.pid === currentPet.pid));
+      setFocused(index);
 
-  const dispatch = useDispatch();
-  const { petsById } = useSelector((state) => state.userpet);
+      setIsLoading(false); // Set isLoading to false once all the dispatches are done
+    };
 
-  // console.log("pets: ", petsById);
+    loadData();
+  }, [dispatch]); // <-- Make sure to include dispatch as a dependency
+
+  const handleChangePet = (pet) => {
+    dispatch(selectCurrentPet(pet));
+    navigation.navigate("Home");
+  };
 
   return (
     <View
@@ -40,12 +54,14 @@ const LeftDrawerContent = (props) => {
             <Image style={{ width: 32, height: 32 }} source={require("../assets/images/switch_logo.png")}></Image>
             <Text style={[{ marginLeft: 15 }, font.purple, font.h5, font.bold]}>Switch Account</Text>
           </View>
-          {petsById &&
+          {petsById && !isLoading ? (
             petsById.map((pet, index) => (
               <View key={index} style={styles.itemWrapper}>
                 <DrawerItem
                   focused={focused === index}
                   onPress={() => {
+                    handleChangePet(pet);
+                    // console.log("pet", pet);
                     setFocused(index);
                   }}
                   style={styles.drawerItem}
@@ -65,7 +81,12 @@ const LeftDrawerContent = (props) => {
                   )}
                 />
               </View>
-            ))}
+            ))
+          ) : (
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+              <ActivityIndicator size="large" color={font.primary.color} />
+            </View>
+          )}
         </DrawerContentScrollView>
       )}
     </View>

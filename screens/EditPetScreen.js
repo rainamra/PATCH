@@ -9,24 +9,12 @@ import { useDispatch, useSelector } from "../store/configureStore";
 
 const EditPetScreen = ({ route, navigation }) => {
   const [viewWidth, setViewWidth] = useState(false);
-  const { data, prevPage, pid } = route.params;
+  const { data, prevPage } = route.params;
   const [index, setIndex] = useState(0);
-
-  const dispatch = useDispatch();
-  const { selectedPet } = useSelector((state) => state.userpet);
-  const { token } = useSelector((state) => state.auth);
 
   const handleIndex = (index) => {
     setIndex(index);
   };
-
-  useEffect(() => {
-    dispatch(getPetByPetId(token, pid));
-  }, []);
-
-  // const colors = selectedPet.colors.split(",");
-
-  // console.log("selectedPet: ", pid, selectedPet);
 
   return (
     <View style={[styles.container]}>
@@ -40,11 +28,11 @@ const EditPetScreen = ({ route, navigation }) => {
         <ScrollView scrollIndicatorInsets={{ top: 5, left: 0, bottom: 5, right: 0 }} style={{ height: "100%", paddingHorizontal: 20 }}>
           <View style={{ marginVertical: 20 }}>
             <View style={styles.titleWrapper}>
-              <Text style={[font.h1, font.bold, font.brown]}>{selectedPet?.name}</Text>
+              <Text style={[font.h1, font.bold, font.brown]}>{data?.name}</Text>
               {prevPage !== "Message" && (
                 <TouchableHighlight
                   onPress={() => {
-                    navigation.navigate("PetForm", { data: selectedPet });
+                    navigation.navigate("PetForm", { data: data });
                   }}
                 >
                   <MaterialCommunityIcons name="pencil" size={26} color={font.pink.color} />
@@ -52,28 +40,28 @@ const EditPetScreen = ({ route, navigation }) => {
               )}
             </View>
 
-            {viewWidth && selectedPet && (
+            {viewWidth && data && (
               <View>
                 <Carousel
                   style={{ borderRadius: 10 }}
                   loop
                   width={viewWidth - 40}
                   height={viewWidth * 0.6}
-                  data={selectedPet?.imageDataList}
+                  data={data?.imageDataList}
                   pagingEnabled={true}
                   onProgressChange={(_, absoluteProgress) => {
                     handleIndex(Math.round(absoluteProgress));
                   }}
                   renderItem={({ index }) => (
                     <View style={{ backgroundColor: "white", width: "100%", height: "100%" }}>
-                      <Image style={{ width: "100%", height: "100%" }} source={{ uri: `data:image/jpg;base64,${selectedPet.imageDataList[index]}` }} />
+                      <Image style={{ width: "100%", height: "100%" }} source={{ uri: `data:image/jpg;base64,${data.imageDataList[index]}` }} />
                     </View>
                   )}
                 />
                 <View style={{ position: "absolute", bottom: 10, justifyContent: "center", alignItems: "center", width: "100%" }}>
                   <AnimatedDotsCarousel
                     style={{ display: "flex", position: "absolute", top: 50 }}
-                    length={selectedPet?.imageDataList.length}
+                    length={data?.imageDataList.length}
                     currentIndex={index}
                     maxIndicators={4}
                     interpolateOpacityAndColor={true}
@@ -107,27 +95,27 @@ const EditPetScreen = ({ route, navigation }) => {
             <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between", alignItems: "center", marginTop: 35, marginBottom: 10 }}>
               <View style={styles.box}>
                 <Text style={styles.subtitle}>Age</Text>
-                <Text style={[styles.subtitleText, { marginTop: 5, textAlign: "center" }]}>{selectedPet?.age} Months</Text>
+                <Text style={[styles.subtitleText, { marginTop: 5, textAlign: "center" }]}>{data?.age} Months</Text>
               </View>
               <View style={styles.box}>
                 <Text style={styles.subtitle}>Weight</Text>
-                <Text style={[styles.subtitleText, { marginTop: 5, textAlign: "center" }]}>{selectedPet?.weight} Kg</Text>
+                <Text style={[styles.subtitleText, { marginTop: 5, textAlign: "center" }]}>{data?.weight} Kg</Text>
               </View>
               <View style={styles.box}>
                 <Text style={styles.subtitle}>Gender</Text>
-                <Text style={[styles.subtitleText, { marginTop: 5, textAlign: "center" }]}>{selectedPet?.gender}</Text>
+                <Text style={[styles.subtitleText, { marginTop: 5, textAlign: "center" }]}>{data?.gender}</Text>
               </View>
             </View>
 
             <View style={{ width: "100%", flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}>
               <View style={{ width: viewWidth / 2 - 25, marginTop: 25 }}>
                 <Text style={styles.subtitle}>Breed</Text>
-                <Text style={styles.subtitleText}>{selectedPet?.breed}</Text>
+                <Text style={styles.subtitleText}>{data?.breed}</Text>
               </View>
               <View style={{ width: viewWidth / 2 - 25, marginTop: 25 }}>
                 <Text style={styles.subtitle}>Color</Text>
                 <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                  {selectedPet?.colors?.split(",").map((char, index) => (
+                  {data?.colors?.split(",").map((char, index) => (
                     <View style={styles.bubble} key={index}>
                       <Text style={styles.bubbleText}>{char}</Text>
                     </View>
@@ -138,27 +126,27 @@ const EditPetScreen = ({ route, navigation }) => {
                 <Text style={styles.subtitle}>Character</Text>
                 <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
                   <View style={styles.bubble}>
-                    <Text style={styles.bubbleText}>{selectedPet.character1}</Text>
+                    <Text style={styles.bubbleText}>{data.character1}</Text>
                   </View>
                   <View style={styles.bubble}>
-                    <Text style={styles.bubbleText}>{selectedPet.character2}</Text>
+                    <Text style={styles.bubbleText}>{data.character2}</Text>
                   </View>
                   <View style={styles.bubble}>
-                    <Text style={styles.bubbleText}>{selectedPet.character3}</Text>
+                    <Text style={styles.bubbleText}>{data.character3}</Text>
                   </View>
                 </View>
               </View>
               <View style={{ width: viewWidth / 2 - 25, marginTop: 20 }}>
                 <Text style={styles.subtitle}>Likes</Text>
-                <Text style={styles.subtitleText}>{selectedPet?.like}</Text>
+                <Text style={styles.subtitleText}>{data?.like}</Text>
               </View>
               <View style={{ width: viewWidth / 2 - 25, marginTop: 20 }}>
                 <Text style={styles.subtitle}>Dislikes</Text>
-                <Text style={styles.subtitleText}>{selectedPet?.dislike}</Text>
+                <Text style={styles.subtitleText}>{data?.dislike}</Text>
               </View>
               <View style={{ width: viewWidth / 2 - 25, marginTop: 20 }}>
                 <Text style={styles.subtitle}>Address</Text>
-                <Text style={styles.subtitleText}>{selectedPet?.address}</Text>
+                <Text style={styles.subtitleText}>{data?.address}</Text>
               </View>
             </View>
           </View>

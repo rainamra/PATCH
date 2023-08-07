@@ -4,6 +4,7 @@ import React, { useLayoutEffect } from "react";
 import { Image, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useDispatch } from "../store/configureStore";
 import { userRegister } from "../store/slices/authApi";
+import { Alert } from 'react-native';
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -47,7 +48,7 @@ const SignUpScreen = () => {
       dispatch(userRegister(values));
     }
     else {
-      alert("Password and Confirm Password must be same");
+      Alert.alert("Alert", "Password and Confirm Password must be same");
     }
   };
 

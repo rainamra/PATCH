@@ -32,7 +32,8 @@ export const slice = createSlice({
 
     getLikesByIdSuccess(state, action) {
       const payload = action.payload;
-      state.likes = payload;
+      // console.log("payload likes", payload);
+      state.likes = payload || [];
     },
 
     getMatchesSuccess(state, action) {

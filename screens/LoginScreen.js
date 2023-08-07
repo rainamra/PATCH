@@ -38,7 +38,7 @@ const LoginScreen = () => {
 
     console.log(values);
 
-    dispatch(userLogin(token, values));
+    dispatch(userLogin(values));
   };
 
   return (

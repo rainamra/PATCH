@@ -15,10 +15,7 @@ const HomeScreen = ({ navigation }) => {
 
   const { users, pets } = useSelector((state) => state.userpet);
   const { matches } = useSelector((state) => state.matchmaking);
-  const { currentPet, token } = useSelector((state) => state.auth);
-
-  // console.log(users, "test");
-  // console.log(currentUser.uid, currentPet);
+  const { currentPet, token, currentUser } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
@@ -31,10 +28,13 @@ const HomeScreen = ({ navigation }) => {
     };
 
     loadData();
-  }, [dispatch]); // <-- Make sure to include dispatch as a dependency
+  }, [dispatch, currentPet]); // <-- Make sure to include dispatch as a dependency
 
   const pet = currentPet?.pid;
   const pid = pet;
+
+  const user = currentUser?.uid;
+  const uid = user;
 
   const addUserInfo = (data1, data2) => {
     const updatedData = data1.map((obj1) => {
@@ -51,40 +51,34 @@ const HomeScreen = ({ navigation }) => {
     return updatedData;
   };
 
-  const userPetData = addUserInfo(pets, users).filter((item) => item.pid !== pid);
+  const userPetData = addUserInfo(pets, users).filter((item) => item.uid !== uid && item.type !== "Dog");
 
   const handleOnSwipedRight = (cardIndex) => {
-    // console.log("swiped right: ", cardIndex);
-
     const values = {
       pid1: pid,
       pid2: userPetData[cardIndex].pid,
       action: true,
     };
 
-    // console.log("values swiped right: ", values, matches);
+    console.log("values swiped right: ", values);
 
-    // dispatch(sendLikeDislike(values));
-
-    matches.find((item) => {
-      if ((item.pid1 === values.pid1 || item.pid1 === values.pid2) && (item.pid2 === values.pid1 || item.pid2 === values.pid2)) {
-        // console.log("match found: ", item);
-        navigation.navigate("Matched", { data: item });
-      }
+    dispatch(sendLikeDislike(token, values)).then(() => {
+      matches.find((item) => {
+        if ((item.pid1 === values.pid1 || item.pid1 === values.pid2) && (item.pid2 === values.pid1 || item.pid2 === values.pid2)) {
+          console.log("match found: ", item);
+          navigation.navigate("Matched", { data: item });
+        }
+      });
     });
   };
 
   const handleOnSwipedLeft = (cardIndex) => {
-    // console.log("swiped left: ", cardIndex);
-
     const values = {
       pid1: pid,
       pid2: userPetData[cardIndex].pid,
       action: false,
     };
-
-    // console.log("values swiped left: ", values);
-
+    console.log("values swiped left: ", values);
     dispatch(sendLikeDislike(token, values));
   };
 
@@ -116,10 +110,7 @@ const HomeScreen = ({ navigation }) => {
                           onSnapToItem={(index) => console.log("current index:", index)}
                           renderItem={({ index }) => (
                             <View>
-                              {/* {console.log("pet: ", card.imageDataList[index])} */}
-                              {/* {console.log("props: ", getCurrentIndex)} */}
                               <Image style={{ width: "100%", height: "100%" }} source={{ uri: `data:image/jpg;base64,${card.imageDataList[index]}` }} />
-                              {/* <Image style={{ width: "100%", height: "100%" }} source={PET_PROFILES[0].pet.photosUrl[index]} /> */}
                             </View>
                           )}
                         />
@@ -131,7 +122,6 @@ const HomeScreen = ({ navigation }) => {
                           </View>
                         </View>
                       </View>
-                      {/* {console.log("card: ", card?.user?.profileImage)} */}
                       <View style={{ backgroundColor: "#ffff", paddingBottom: 20, borderBottomLeftRadius: 20, borderBottomRightRadius: 20 }}>
                         <View style={{ flexDirection: "row", paddingTop: 25, paddingHorizontal: 25 }}>
                           {card?.user?.profileImageUrl && <Image style={{ width: 50, height: 50, borderRadius: 50 }} source={{ uri: `data:image/jpg;base64,${card?.user?.profileImage}` }}></Image>}

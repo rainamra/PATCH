@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, TouchableHighlight, View } from "react-native";
+import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableHighlight, View } from "react-native";
 import { HeaderTitle } from "../component/HeaderComponent";
 import { useDispatch, useSelector } from "../store/configureStore";
 import { getForums, getLikedForumsByUid, getSavedForumsByUid, sendLikeSave } from "../store/slices/forumApi";
@@ -13,9 +13,12 @@ const ForumListScreen = ({ navigation }) => {
   const { users, selectedUser } = useSelector((state) => state.userpet);
   const { token, currentUser } = useSelector((state) => state.auth);
 
+  const [isLoading, setIsLoading] = useState(true);
   const [viewWidth, setViewWidth] = useState(false);
   const [viewHeight, setViewWHeight] = useState(false);
   const [openSaved, setOpenSaved] = useState(false);
+  const [userSavedForumData, setUserSavedForumData] = useState([]);
+  const [userForumData, setUserForumData] = useState([]);
 
   const toggleSave = () => {
     setOpenSaved((prev) => !prev);
@@ -46,15 +49,6 @@ const ForumListScreen = ({ navigation }) => {
 
   const user = currentUser?.uid;
   const uid = user;
-
-  useEffect(() => {
-    dispatch(getForums(token));
-    dispatch(getUsers(token));
-    // dispatch(getForums());
-    dispatch(getUserByUserId(token, uid));
-    dispatch(getSavedForumsByUid(token, uid));
-    dispatch(getLikedForumsByUid(token, uid));
-  }, []);
 
   const handleLikeForum = (fid) => {
     const values = {
@@ -129,12 +123,21 @@ const ForumListScreen = ({ navigation }) => {
     return updatedData;
   };
 
-  const userForumData = addUserInfo(forums, users);
-  const userSavedForumData = addForumData(addUserInfoSaved(savedForums, users), forums);
+  useEffect(() => {
+    const loadData = async () => {
+      // Dispatch multiple actions and wait for them to complete
+      await Promise.all([dispatch(getForums(token)), dispatch(getUsers(token)), dispatch(getUserByUserId(token, uid)), dispatch(getSavedForumsByUid(token, uid)), dispatch(getLikedForumsByUid(token, uid))]);
+      const userInfoData = addUserInfo(forums, users);
+      setUserForumData(userInfoData);
 
-  // UID - 20230719185239;
+      const userSavedForumInfoData = addForumData(addUserInfoSaved(savedForums, users), forums);
+      setUserSavedForumData(userSavedForumInfoData);
 
-  // console.log("forums", forums);
+      setIsLoading(false); // Set isLoading to false once all the dispatches are done
+    };
+
+    loadData();
+  }, [dispatch]); // <-- Make sure to include dispatch as a dependency
 
   return (
     <View
@@ -176,139 +179,145 @@ const ForumListScreen = ({ navigation }) => {
 
         {/* <Image source={require("../assets/images/default-profile.png")} resizeMode="cover" style={{ width: "100%", height: "100%", position: "absolute", bottom: -5 }}></Image> */}
 
-        <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
-          {userForumData &&
-            !openSaved &&
-            userForumData.map((forum, index) => {
-              const saved = savedForums?.find((savedForum) => savedForum.fid === forum.fid);
-              const liked = likedForums?.find((likedForum) => likedForum.fid === forum.fid);
+        {!isLoading ? (
+          <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
+            {userForumData &&
+              !openSaved &&
+              userForumData.map((forum, index) => {
+                const saved = savedForums?.find((savedForum) => savedForum.fid === forum.fid);
+                const liked = likedForums?.find((likedForum) => likedForum.fid === forum.fid);
 
-              return (
-                <TouchableHighlight key={index} onPress={() => navigation.navigate("ForumScreen", { data: forum, liked: liked, saved: saved })} style={{ marginBottom: 20 }}>
-                  <View style={styles.regBoxWrapper}>
-                    <View style={styles.addBoxImageWrapper}>
-                      {/* {console.log("profileImage: ", forum?.user)} */}
-                      <Image source={{ uri: `data:image/jpg;base64,${forum?.user?.profileImage}` }} resizeMode={"cover"} style={{ width: "100%", height: "100%" }}></Image>
+                return (
+                  <TouchableHighlight key={index} onPress={() => navigation.navigate("ForumScreen", { data: forum, liked: liked, saved: saved })} style={{ marginBottom: 20 }}>
+                    <View style={styles.regBoxWrapper}>
+                      <View style={styles.addBoxImageWrapper}>
+                        {/* {console.log("profileImage: ", forum?.user)} */}
+                        <Image source={{ uri: `data:image/jpg;base64,${forum?.user?.profileImage}` }} resizeMode={"cover"} style={{ width: "100%", height: "100%" }}></Image>
+                      </View>
+                      <View style={styles.addBoxTextWrapper}>
+                        <Text style={styles.text3}>{forum?.title}</Text>
+                        <Text style={styles.text2}>By {forum?.user?.name}</Text>
+                      </View>
+                      <View style={styles.iconsWrapper}>
+                        {saved ? (
+                          <Ionicons
+                            name="bookmark"
+                            size={24}
+                            color={font.primary.color}
+                            onPress={() => {
+                              handleSaveForum(forum.fid);
+                            }}
+                            style={{ marginRight: 10 }}
+                          />
+                        ) : (
+                          <Ionicons
+                            name="bookmark-outline"
+                            size={24}
+                            color={font.primary.color}
+                            backgroundColor={font.light.color}
+                            onPress={() => {
+                              handleSaveForum(forum.fid);
+                            }}
+                            style={{ marginRight: 10 }}
+                          />
+                        )}
+                        {liked ? (
+                          <Ionicons
+                            name="heart"
+                            size={24}
+                            color={font.pink.color}
+                            onPress={() => {
+                              handleLikeForum(forum.fid);
+                            }}
+                          />
+                        ) : (
+                          <Ionicons
+                            name="heart-outline"
+                            size={24}
+                            color={font.pink.color}
+                            backgroundColor={font.light.color}
+                            onPress={() => {
+                              handleLikeForum(forum.fid);
+                            }}
+                          />
+                        )}
+                      </View>
                     </View>
-                    <View style={styles.addBoxTextWrapper}>
-                      <Text style={styles.text3}>{forum?.title}</Text>
-                      <Text style={styles.text2}>By {forum?.user?.name}</Text>
-                    </View>
-                    <View style={styles.iconsWrapper}>
-                      {saved ? (
-                        <Ionicons
-                          name="bookmark"
-                          size={24}
-                          color={font.primary.color}
-                          onPress={() => {
-                            handleSaveForum(forum.fid);
-                          }}
-                          style={{ marginRight: 10 }}
-                        />
-                      ) : (
-                        <Ionicons
-                          name="bookmark-outline"
-                          size={24}
-                          color={font.primary.color}
-                          backgroundColor={font.light.color}
-                          onPress={() => {
-                            handleSaveForum(forum.fid);
-                          }}
-                          style={{ marginRight: 10 }}
-                        />
-                      )}
-                      {liked ? (
-                        <Ionicons
-                          name="heart"
-                          size={24}
-                          color={font.pink.color}
-                          onPress={() => {
-                            handleLikeForum(forum.fid);
-                          }}
-                        />
-                      ) : (
-                        <Ionicons
-                          name="heart-outline"
-                          size={24}
-                          color={font.pink.color}
-                          backgroundColor={font.light.color}
-                          onPress={() => {
-                            handleLikeForum(forum.fid);
-                          }}
-                        />
-                      )}
-                    </View>
-                  </View>
-                </TouchableHighlight>
-              );
-            })}
-          {userForumData &&
-            openSaved &&
-            userSavedForumData.map((forum, index) => {
-              const saved = savedForums?.find((savedForum) => savedForum.fid === forum.fid);
-              const liked = likedForums?.find((likedForum) => likedForum.fid === forum.fid);
+                  </TouchableHighlight>
+                );
+              })}
+            {userForumData &&
+              openSaved &&
+              userSavedForumData.map((forum, index) => {
+                const saved = savedForums?.find((savedForum) => savedForum.fid === forum.fid);
+                const liked = likedForums?.find((likedForum) => likedForum.fid === forum.fid);
 
-              // console.log("forum: ", forum.title);
-              return (
-                <TouchableHighlight key={index} onPress={() => navigation.navigate("ForumScreen", { data: forum, liked: liked, saved: saved })} style={{ marginBottom: 20 }}>
-                  <View style={styles.regBoxWrapper}>
-                    <View style={styles.addBoxImageWrapper}>
-                      {/* {console.log("profileImage: ", forum?.user)} */}
-                      <Image source={{ uri: `data:image/jpg;base64,${forum?.user?.profileImage}` }} resizeMode={"cover"} style={{ width: "100%", height: "100%" }}></Image>
+                // console.log("forum: ", forum.title);
+                return (
+                  <TouchableHighlight key={index} onPress={() => navigation.navigate("ForumScreen", { data: forum, liked: liked, saved: saved })} style={{ marginBottom: 20 }}>
+                    <View style={styles.regBoxWrapper}>
+                      <View style={styles.addBoxImageWrapper}>
+                        {/* {console.log("profileImage: ", forum?.user)} */}
+                        <Image source={{ uri: `data:image/jpg;base64,${forum?.user?.profileImage}` }} resizeMode={"cover"} style={{ width: "100%", height: "100%" }}></Image>
+                      </View>
+                      <View style={styles.addBoxTextWrapper}>
+                        <Text style={styles.text3}>{forum?.title}</Text>
+                        <Text style={styles.text2}>By {forum?.user?.name}</Text>
+                      </View>
+                      <View style={styles.iconsWrapper}>
+                        {saved ? (
+                          <Ionicons
+                            name="bookmark"
+                            size={24}
+                            color={font.primary.color}
+                            onPress={() => {
+                              handleSaveForum(forum.fid);
+                            }}
+                            style={{ marginRight: 10 }}
+                          />
+                        ) : (
+                          <Ionicons
+                            name="bookmark-outline"
+                            size={24}
+                            color={font.primary.color}
+                            backgroundColor={font.light.color}
+                            onPress={() => {
+                              handleSaveForum(forum.fid);
+                            }}
+                            style={{ marginRight: 10 }}
+                          />
+                        )}
+                        {liked ? (
+                          <Ionicons
+                            name="heart"
+                            size={24}
+                            color={font.pink.color}
+                            onPress={() => {
+                              handleLikeForum(forum.fid);
+                            }}
+                          />
+                        ) : (
+                          <Ionicons
+                            name="heart-outline"
+                            size={24}
+                            color={font.pink.color}
+                            backgroundColor={font.light.color}
+                            onPress={() => {
+                              handleLikeForum(forum.fid);
+                            }}
+                          />
+                        )}
+                      </View>
                     </View>
-                    <View style={styles.addBoxTextWrapper}>
-                      <Text style={styles.text3}>{forum?.title}</Text>
-                      <Text style={styles.text2}>By {forum?.user?.name}</Text>
-                    </View>
-                    <View style={styles.iconsWrapper}>
-                      {saved ? (
-                        <Ionicons
-                          name="bookmark"
-                          size={24}
-                          color={font.primary.color}
-                          onPress={() => {
-                            handleSaveForum(forum.fid);
-                          }}
-                          style={{ marginRight: 10 }}
-                        />
-                      ) : (
-                        <Ionicons
-                          name="bookmark-outline"
-                          size={24}
-                          color={font.primary.color}
-                          backgroundColor={font.light.color}
-                          onPress={() => {
-                            handleSaveForum(forum.fid);
-                          }}
-                          style={{ marginRight: 10 }}
-                        />
-                      )}
-                      {liked ? (
-                        <Ionicons
-                          name="heart"
-                          size={24}
-                          color={font.pink.color}
-                          onPress={() => {
-                            handleLikeForum(forum.fid);
-                          }}
-                        />
-                      ) : (
-                        <Ionicons
-                          name="heart-outline"
-                          size={24}
-                          color={font.pink.color}
-                          backgroundColor={font.light.color}
-                          onPress={() => {
-                            handleLikeForum(forum.fid);
-                          }}
-                        />
-                      )}
-                    </View>
-                  </View>
-                </TouchableHighlight>
-              );
-            })}
-        </View>
+                  </TouchableHighlight>
+                );
+              })}
+          </View>
+        ) : (
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <ActivityIndicator size="large" color={font.primary.color} />
+          </View>
+        )}
       </ScrollView>
     </View>
   );

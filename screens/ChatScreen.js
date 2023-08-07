@@ -1,15 +1,17 @@
 import { AntDesign } from "@expo/vector-icons";
 import React, { useRef, useState, useEffect } from "react";
-import { Image, ScrollView, Text, TouchableHighlight, View, StyleSheet } from "react-native";
+import { Image, ScrollView, Text, TouchableHighlight, View, StyleSheet, ActivityIndicator } from "react-native";
 import BottomSheet from "../component/BottomSheet";
 import { useDispatch, useSelector } from "../store/configureStore";
-import { getMatches } from "../store/slices/matchmakingApi";
+import { getMatches, deleteMatch } from "../store/slices/matchmakingApi";
 import { font } from "../styles";
 import { getPets } from "../store/slices/userPetApi";
 
 const ChatScreen = ({ navigation }) => {
   const [viewWidth, setViewWidth] = useState(false);
   const [match, setMatch] = useState({});
+  const [matchData, setMatchData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [matchedModalIsOpen, setMatchedModalIsOpen] = useState(false);
 
@@ -18,39 +20,31 @@ const ChatScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { matches } = useSelector((state) => state.matchmaking);
   const { pets } = useSelector((state) => state.userpet);
-  const { currentUser, token } = useSelector((state) => state.auth);
+  const { currentPet, token } = useSelector((state) => state.auth);
 
-  const pet = currentUser.pid;
+  const pet = currentPet.pid;
   const pid = pet;
-  // const pid = user === data.pid1 ? data.pid1 : data.pid2;
-  // const receiver = pid !== data.pid1 ? data.pid1 : data.pid2;
 
   const getMatchingObjects = (data) => {
     const matchingObjects = data.filter((item) => item.pid1 === pid || item.pid2 === pid);
     return matchingObjects;
   };
 
-  // const [data1, setData1] = useState(getMatchingObjects(matches));
-  // const [data2, setData2] = useState(pets);
-  // const [test, setTest] = useState(false);
-
-  const addNameInfo = (data1, data2) => {
+  const addPetInfo = (data1, data2) => {
     const updatedData1 = data1.map((obj1) => {
       // Check if pid1 exists in data2
       const found1 = data2.find((obj2) => obj2.pid === obj1.pid1);
       if (found1) {
         // console.log("found1: ", found1);
-        obj1 = { ...obj1, pet1: { pid: obj1.pid1, name: found1.name, imageDataList: found1.imageDataList } };
+        obj1 = { ...obj1, pet1: { ...found1 } };
       }
 
       // Check if pid2 exists in data2
       const found2 = data2.find((obj2) => obj2.pid === obj1.pid2);
       if (found2) {
         // console.log("found2: ", found2);
-        obj1 = { ...obj1, pet2: { pid: obj1.pid2, name: found2.name, imageDataList: found2.imageDataList } };
+        obj1 = { ...obj1, pet2: { ...found2 } };
       }
-
-      // console.log("obj1: ", obj1);
 
       return obj1;
     });
@@ -59,16 +53,22 @@ const ChatScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    dispatch(getMatches(token));
-    dispatch(getPets(token));
-  }, []);
+    const loadData = async () => {
+      // Dispatch multiple actions and wait for them to complete
+      await Promise.all([dispatch(getMatches(token)), dispatch(getPets(token))]);
+    };
 
-  // console.log("pets: ", pets);
+    loadData();
+  }, [dispatch, currentPet]); // <-- Make sure to include dispatch as a dependency
 
-  /* GET THE PHOTO AND DETAILS by filtering pets with getMatchingObjects(matches) */
-  const matchData = addNameInfo(getMatchingObjects(matches), pets);
-
-  // console.log("matchData: ", matchData);
+  useEffect(() => {
+    // Check if likes and pets data are available
+    if (matches.length > 0 && pets.length > 0) {
+      // Call the addPetInfo function with the updated data
+      setMatchData(addPetInfo(getMatchingObjects(matches), pets));
+    }
+    setIsLoading(false);
+  }, [matches, pets, currentPet]);
 
   const handlePresentMatchedModal = (match) => {
     matchedSheetModalRef.current?.present();
@@ -95,7 +95,14 @@ const ChatScreen = ({ navigation }) => {
             <Text style={[font.medium, font.h6, font.dark]}>Message</Text>
           </View>
         </TouchableHighlight>
-        <TouchableHighlight style={{ paddingTop: 15 }}>
+        <TouchableHighlight
+          style={{ paddingTop: 15 }}
+          onPress={() => {
+            // console.log("Unmatched", match.mid);
+            dispatch(deleteMatch(token, match.mid));
+            handleDismissMatchedModal();
+          }}
+        >
           <View style={{ alignItems: "center" }}>
             <Text style={[font.medium, font.h6, font.dark]}>Unmatched</Text>
           </View>
@@ -103,6 +110,8 @@ const ChatScreen = ({ navigation }) => {
       </View>
     );
   };
+
+  // console.log(matchData);
 
   return (
     <View
@@ -112,50 +121,61 @@ const ChatScreen = ({ navigation }) => {
         setViewWidth(width);
       }}
     >
-      <ScrollView>
-        <View style={{ paddingVertical: 30 }}>
-          <ScrollView vertical={false} horizontal={true} showsHorizontalScrollIndicator={false}>
-            <View style={{ flexDirection: "row", paddingHorizontal: 20 }}>
-              {/* MATCHED LIST - NO CHAT HISTORY */}
-              {matchData &&
-                matchData.map((match, index) => (
-                  <TouchableHighlight key={index} style={[{ width: viewWidth / 5, height: viewWidth / 5, display: index === 1 || index === 0 && "none" }, styles.matchWrapper]} onPress={() => handlePresentMatchedModal(match)}>
-                    <View style={styles.imageWrapper}>
-                      <Image source={{ uri: `data:image/jpg;base64,${pid !== match.pid1 ? match?.pet1?.imageDataList[0] : match?.pet2?.imageDataList[0]}` }} resizeMode={"cover"} style={styles.image}></Image>
-                      {/* <Text>{match.pid1}</Text> */}
-                    </View>
-                  </TouchableHighlight>
-                ))}
-            </View>
-          </ScrollView>
-        </View>
+      {!isLoading && pets && matches && matchData ? (
+        <ScrollView>
+          <View style={{ paddingVertical: 30 }}>
+            <ScrollView vertical={false} horizontal={true} showsHorizontalScrollIndicator={false}>
+              <View style={{ flexDirection: "row", paddingHorizontal: 20 }}>
+                {/* MATCHED LIST - NO CHAT HISTORY */}
+                {matchData &&
+                  matchData.map((match, index) => {
+                    if (!match?.hasInteracted) {
+                      return (
+                        <TouchableHighlight key={index} style={[{ width: viewWidth / 5, height: viewWidth / 5 }, styles.matchWrapper]} onPress={() => handlePresentMatchedModal(match)}>
+                          <View style={styles.imageWrapper}>
+                            <Image source={{ uri: `data:image/jpg;base64,${pid !== match.pid1 ? match?.pet1?.imageDataList[0] : match?.pet2?.imageDataList[0]}` }} resizeMode={"cover"} style={styles.image}></Image>
+                          </View>
+                        </TouchableHighlight>
+                      );
+                    }
+                  })}
+              </View>
+            </ScrollView>
+          </View>
 
-        {/* GET THE PHOTO AND DETAILS */}
-        <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
-          {matchData &&
-            matchData.map((match, index) => {
-              // console.log("match: ", match.imageDataList, match);
-              return (
-                <TouchableHighlight key={index} style={{ marginBottom: 20 }} onPress={() => navigation.navigate("Message", { data: match })}>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <View style={styles.chatImageWrapper}>
-                      <Image source={{ uri: `data:image/jpg;base64,${pid !== match.pid1 ? match?.pet1?.imageDataList[0] : match?.pet2?.imageDataList[0]}` }} resizeMode={"cover"} style={styles.image}></Image>
-                    </View>
-                    <View style={[styles.textWrapper, { width: viewWidth - 80 }]}>
-                      <View style={{ height: "100%", paddingVertical: 10 }}>
-                        <Text style={styles.text1}>{pid !== match.pid1 ? match?.pet1?.name : match?.pet2?.name}</Text>
-                        <Text style={styles.text2}>Sent you a message</Text>
+          {/* GET THE PHOTO AND DETAILS */}
+          <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
+            {matchData &&
+              matchData.map((match, index) => {
+                // console.log("match: ", match);
+                if (match?.hasInteracted) {
+                  return (
+                    <TouchableHighlight key={index} style={{ marginBottom: 20 }} onPress={() => navigation.navigate("Message", { data: match })}>
+                      <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <View style={styles.chatImageWrapper}>
+                          <Image source={{ uri: `data:image/jpg;base64,${pid !== match.pid1 ? match?.pet1?.imageDataList[0] : match?.pet2?.imageDataList[0]}` }} resizeMode={"cover"} style={styles.image}></Image>
+                        </View>
+                        <View style={[styles.textWrapper, { width: viewWidth - 80 }]}>
+                          <View style={{ height: "100%", paddingVertical: 10 }}>
+                            <Text style={styles.text1}>{pid !== match.pid1 ? match?.pet1?.name : match?.pet2?.name}</Text>
+                            <Text style={styles.text2}>Sent you a message</Text>
+                          </View>
+                          <View>
+                            <AntDesign name="rightcircle" size={25} color="#f0ae5e" />
+                          </View>
+                        </View>
                       </View>
-                      <View>
-                        <AntDesign name="rightcircle" size={25} color="#f0ae5e" />
-                      </View>
-                    </View>
-                  </View>
-                </TouchableHighlight>
-              );
-            })}
+                    </TouchableHighlight>
+                  );
+                }
+              })}
+          </View>
+        </ScrollView>
+      ) : (
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <ActivityIndicator size="large" color={font.primary.color} />
         </View>
-      </ScrollView>
+      )}
       <BottomSheet snapPoints={["10%", "15%"]} refBottomSheet={matchedSheetModalRef} SheetContent={renderMatchedSheetContent} isOpen={matchedModalIsOpen} toggleClose={() => setMatchedModalIsOpen(false)} />
     </View>
   );

@@ -2,12 +2,14 @@ import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { FlatList, Keyboard, KeyboardAvoidingView, Platform, Text, TouchableWithoutFeedback, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-import { USER_PET_PROFILES } from "../_mockApis/payload/userPet";
 import ReceiverMessage from "../component/ReceiverMessage";
 import SenderMessage from "../component/SenderMessage";
 import { useDispatch, useSelector } from "../store/configureStore";
 import { getMessageHistory, sendMessage } from "../store/slices/chatApi";
 import { font } from "../styles";
+import { getMatches } from "../store/slices/matchmakingApi";
+import { getPets } from "../store/slices/userPetApi";
+
 
 const MessageScreen = ({ route, navigation }) => {
   const { data, prevPage } = route.params;
@@ -18,12 +20,16 @@ const MessageScreen = ({ route, navigation }) => {
   const { currentPet, token } = useSelector((state) => state.auth);
 
   const pet = currentPet?.pid;
-  const pid = pet === data.pid1 ? data.pid1 : data.pid2;
-  const receiver = pet !== data.pid1 ? data.pid1 : data.pid2;
-  const receiverData = prevPage === "Matched" ? { pid: receiver, name: data.name } : pet !== data.pet1.pid ? data.pet1 : data.pet2;
+  const pid = pet;
+  const receiver = prevPage === "Matched" ? data.pid : pid !== data.pet1.pid ? data.pid1 : data.pid2;
+  const receiverData = prevPage === "Matched" ? data : pid !== data.pet1.pid ? data.pet1 : data.pet2;
+
+  // console.log("receiverData: ", receiverData);
+  // console.log("pid: ", pet);
+  // console.log("receiver : ", messages);
 
   useEffect(() => {
-    dispatch(getMessageHistory(token, data?.pid1, data?.pid2));
+    dispatch(getMessageHistory(token, pid, receiver));
   }, []);
 
   const handleSendMessage = () => {
@@ -39,9 +45,21 @@ const MessageScreen = ({ route, navigation }) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: true,
-      headerLeft: (props) => <AntDesign name="leftcircle" size={25} color="#f0ae5e" onPress={navigation.goBack} {...props} />,
+      headerLeft: (props) => (
+        <AntDesign
+          name="leftcircle"
+          size={25}
+          color="#f0ae5e"
+          onPress={() => {
+            dispatch(getMatches(token));
+            dispatch(getPets(token));
+            navigation.goBack();
+          }}
+          {...props}
+        />
+      ),
       headerTitle: (props) => (
-        <Text style={[font.primary, font.h3, font.bold]} {...props} onPress={() => navigation.navigate("EditPet", { data: USER_PET_PROFILES.pets[0], prevPage: "Message", pid: receiver })}>
+        <Text style={[font.primary, font.h3, font.bold]} {...props} onPress={() => navigation.navigate("EditPet", { data: receiverData, prevPage: "Message" })}>
           {receiverData?.name}
         </Text>
       ),
@@ -58,10 +76,7 @@ const MessageScreen = ({ route, navigation }) => {
             data={messages}
             style={{ paddingHorizontal: 20, paddingBottom: 20 }}
             keyExtractor={(item, index) => index}
-            // keyExtractor={(item) => item.id}
             renderItem={({ item: message, index }) => (message.pid1 === pid ? <SenderMessage key={index} message={message.body} /> : <ReceiverMessage key={index} message={message.body} />)}
-            // <ReceiverMessage key={index} message={message} />}
-            // renderItem={({ item: message }) => (message.userId === user.user ? <SenderMessage key={message.id} message={message} /> : <ReceiverMessage key={message.id} message={message} />)}
           ></FlatList>
         </TouchableWithoutFeedback>
 
@@ -77,7 +92,6 @@ const MessageScreen = ({ route, navigation }) => {
           <View style={{ width: "10%", alignItems: "center" }}>
             <MaterialIcons name="send" size={28} color={font.primary.color} onPress={handleSendMessage} />
           </View>
-          {/* <Button onPress={sendMessage} title="Send"></Button> */}
         </View>
       </KeyboardAvoidingView>
     </View>

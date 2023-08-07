@@ -1,14 +1,78 @@
 import { SimpleLineIcons } from "@expo/vector-icons";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import Swiper from "react-native-deck-swiper";
 import Carousel from "react-native-reanimated-carousel";
 import { font } from "../styles";
 import { formatDate } from "../utils/dateUtils";
+import { useDispatch, useSelector } from "../store/configureStore";
+import { getMatches, sendLikeDislike } from "../store/slices/matchmakingApi";
 
 const LikeSwiperScreen = ({ route, navigation }) => {
   const { data } = route.params;
   const PAGE_WIDTH = Dimensions.get("window").width;
+  const [isLoading, setIsLoading] = useState(true);
+
+  const { currentPet, token } = useSelector((state) => state.auth);
+  const { matches } = useSelector((state) => state.matchmaking);
+
+  const dispatch = useDispatch();
+
+  const pet = currentPet?.pid;
+  const pid = pet;
+
+  const handleOnSwipedRight = (cardIndex) => {
+    // console.log("swiped right: ", cardIndex);
+    const values = {
+      pid1: pid,
+      pid2: data[cardIndex].pid,
+      action: true,
+    };
+
+    // console.log("values swiped right: ", values);
+
+    // dispatch(sendLikeDislike(token, values)).then(() => {
+    //   console.log("matches: ", matches);
+
+    //   dispatch(getMatches(token)).then(() => {
+    //     matches.find((item) => {
+    //       if ((item.pid1 === values.pid1 || item.pid1 === values.pid2) && (item.pid2 === values.pid1 || item.pid2 === values.pid2)) {
+    //         console.log("match found: ", item);
+    //         navigation.navigate("Matched", { data: data[cardIndex] });
+    //       }
+    //     });
+    //   });
+    // });
+
+    dispatch(sendLikeDislike(token, values))
+      .then(() => {
+        return dispatch(getMatches(token));
+      })
+      .then((matchesData) => {
+        // console.log("matchesData: ", matchesData);
+        const matchedItem = matchesData.find((item) => (item.pid1 === values.pid1 || item.pid1 === values.pid2) && (item.pid2 === values.pid1 || item.pid2 === values.pid2));
+
+        if (matchedItem) {
+          // console.log("match found: ", matchedItem);
+          navigation.navigate("Matched", { data: data[cardIndex] });
+        }
+      })
+      .catch((error) => {
+        console.error("Error occurred:", error);
+        // Handle errors here if needed
+      });
+  };
+
+  const handleOnSwipedLeft = (cardIndex) => {
+    // console.log("swiped left: ", cardIndex);
+    const values = {
+      pid1: pid,
+      pid2: data[cardIndex].pid,
+      action: false,
+    };
+    console.log("values swiped left: ", values);
+    dispatch(sendLikeDislike(token, values));
+  };
 
   return (
     <View style={styles.container}>
@@ -27,20 +91,15 @@ const LikeSwiperScreen = ({ route, navigation }) => {
                 <TouchableWithoutFeedback>
                   <View style={{ height: "100%", minHeight: 1100, borderTopLeftRadius: 20, borderTopRightRadius: 20, overflow: "hidden" }}>
                     <View>
-                      {/* <Image style={{ width: "100%", height: "100%" }} source={card.photosUrl[0]} /> */}
-                      {/* <Image source={{ uri: `data:image/jpg;base64,${card?.user?.profileImage}` }}></Image> */}
                       <Carousel
-                        // loop
+                        loop
                         width={PAGE_WIDTH}
                         height={PAGE_WIDTH * 1.2}
-                        data={card?.photosUrl}
+                        data={card?.imageDataList}
                         onSnapToItem={(index) => console.log("current index:", index)}
                         renderItem={({ index }) => (
                           <View>
-                            {/* {console.log("pet: ", card.imageDataList[index])} */}
-                            {/* {console.log("props: ", getCurrentIndex)} */}
-                            {/* <Image style={{ width: "100%", height: "100%" }} source={profileUrl} /> */}
-                            <Image style={{ width: "100%", height: "100%" }} source={card.photosUrl[index]} />
+                            <Image style={{ width: "100%", height: "100%" }} source={{ uri: `data:image/jpg;base64,${card?.imageDataList[index]}` }} />
                           </View>
                         )}
                       />
@@ -52,10 +111,9 @@ const LikeSwiperScreen = ({ route, navigation }) => {
                         </View>
                       </View>
                     </View>
-                    {/* {console.log("card: ", card?.user?.profileImage)} */}
                     <View style={{ backgroundColor: "#ffff", paddingBottom: 20, borderBottomLeftRadius: 20, borderBottomRightRadius: 20 }}>
                       <View style={{ flexDirection: "row", paddingTop: 25, paddingHorizontal: 25 }}>
-                        {card?.user?.profileUrl && <Image style={{ width: 50, height: 50, borderRadius: 50 }} source={card.user.profileUrl}></Image>}
+                        <Image style={{ width: 50, height: 50, borderRadius: 50 }} source={{ uri: `data:image/jpg;base64,${card?.user?.profileImage}` }}></Image>
                         <View style={{ marginLeft: 20, paddingVertical: 5 }}>
                           <Text style={[font.bold, font.brown, font.h5]}>{card?.user?.name}</Text>
                           <Text style={[font.primary, font.bold, font.p]}>{formatDate(card?.user?.dateCreated)}</Text>

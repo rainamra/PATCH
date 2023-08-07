@@ -1,8 +1,9 @@
-import { View, Text, Image, TouchableHighlight, TouchableWithoutFeedback } from "react-native";
-import React, { useState, useEffect } from "react";
-import { font } from "../styles";
-import { getPetByPetId } from "../store/slices/userPetApi";
+import { AntDesign } from "@expo/vector-icons";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { Image, Text, TouchableHighlight, View } from "react-native";
 import { useDispatch, useSelector } from "../store/configureStore";
+import { getPetByPetId } from "../store/slices/userPetApi";
+import { font } from "../styles";
 
 const MatchedScreen = ({ route, navigation }) => {
   const [screenWidth, setScreenWidth] = useState(false);
@@ -14,13 +15,35 @@ const MatchedScreen = ({ route, navigation }) => {
 
   const pet = currentPet.pid;
   const pid = pet;
-  const receiver = pid !== data.pid1 ? data.pid1 : data.pid2;
+  // const receiver = pid !== data.pid1 ? data.pid1 : data.pid2;
+  const receiver = data.pid;
 
   useEffect(() => {
     dispatch(getPetByPetId(token, receiver));
   }, []);
 
   // console.log("data: ", data, " ", selectedPet);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      headerTitle: "",
+      headerShadowVisible: false,
+      headerLeft: (props) => (
+        <AntDesign
+          name="leftcircle"
+          size={25}
+          color="#ffff"
+          onPress={() => {
+            navigation.goBack();
+            navigation.goBack();
+          }}
+          {...props}
+        />
+      ),
+      headerStyle: { backgroundColor: font.primary.color },
+    });
+  }, []);
 
   return (
     <View
@@ -44,10 +67,10 @@ const MatchedScreen = ({ route, navigation }) => {
           </View>
           <View style={{ flexDirection: "row", justifyContent: "center", width: "100%", marginBottom: 40 }}>
             <View style={{ height: screenWidth * (40 / 100), width: screenWidth * (30 / 100), borderRadius: 10, overflow: "hidden", transform: [{ rotate: "-20deg" }] }}>
-              <Image source={require("../assets/images/mimi-1.jpg")} resizeMode={"cover"} style={{ height: "100%", width: "100%" }}></Image>
+              <Image source={{ uri: `data:image/jpg;base64,${currentPet?.imageDataList[0]}` }} resizeMode={"cover"} style={{ height: "100%", width: "100%" }}></Image>
             </View>
             <View style={{ height: screenWidth * (40 / 100), width: screenWidth * (30 / 100), borderRadius: 10, overflow: "hidden", transform: [{ rotate: "20deg" }] }}>
-              <Image source={require("../assets/images/jayson-1.jpg")} resizeMode={"cover"} style={{ height: "100%", width: "100%" }}></Image>
+              <Image source={{ uri: `data:image/jpg;base64,${data?.imageDataList[0]}` }} resizeMode={"cover"} style={{ height: "100%", width: "100%" }}></Image>
             </View>
           </View>
           <View style={{ marginBottom: 20 }}>
@@ -56,7 +79,7 @@ const MatchedScreen = ({ route, navigation }) => {
           <View style={{ flexDirection: "row", width: "100%", justifyContent: "center" }}>
             <TouchableHighlight
               style={[{ backgroundColor: font.secondary.color, borderRadius: 50, width: screenWidth * (65 / 100), alignItems: "center", paddingVertical: 15, paddingHorizontal: 15 }]}
-              onPress={() => navigation.navigate("Message", { data: { ...data, name: selectedPet.name }, prevPage: "Matched" })}
+              onPress={() => navigation.navigate("Message", { data: { ...data }, prevPage: "Matched" })}
             >
               <Text style={[font.h5, font.brown, font.bold]}>Greet Them First</Text>
             </TouchableHighlight>

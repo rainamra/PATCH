@@ -3,11 +3,8 @@ import { dispatch } from "../configureStore";
 import "../../_mockApis";
 import { authUrl } from "../servicesUrl";
 import { slice } from "./auth";
-import { sliceUserPet } from "./userPet";
-import { getPetsByUserId } from "./userPetApi";
-
-// import { useReducer } from "react";
-// import accountReducer from "../store/accountReducer";
+import { slice as sliceUserPet } from "./userPet";
+import { Alert } from 'react-native';
 
 const URL = authUrl;
 
@@ -15,11 +12,20 @@ export function getPetsByUid(bearerToken, id) {
   return async () => {
     try {
       const response = await axios.get(`${URL}/${id}/pet`, { headers: { Authorization: `Bearer ${bearerToken}` } });
-      // console.log("response pets by uid", response.data);
-      // const response = await mockAxios.get("/api/user");
       dispatch(slice.actions.selectCurrentPet(response.data[0]));
       dispatch(slice.actions.getPetsSuccess(response.data));
       dispatch(sliceUserPet.actions.getPetsByIdSuccess(response.data));
+    } catch (error) {
+      console.log("error muncul ", error);
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+export function selectCurrentPet(values) {
+  return async () => {
+    try {
+      dispatch(slice.actions.selectCurrentPet(values));
     } catch (error) {
       console.log("error muncul ", error);
       dispatch(slice.actions.hasError(error));
@@ -35,11 +41,13 @@ export function userLogin(values) {
       })
       .then((res) => {
         dispatch(slice.actions.loginSuccess(res.data));
-        // console.log("response muncul ", res.data.uid);
         dispatch(getPetsByUid(res.data.jwtToken, res.data.uid));
       })
       .catch((err) => {
-        // showSnackBar(err.response.data.error_schema.error_message.english, "error");
+        console.log("error muncul ", err);
+        if (err.response?.data?.includes("Invalid")) {
+          Alert.alert("Error", "Invalid email or password");
+        }
         dispatch(slice.actions.hasError(err));
       });
   };

@@ -3,6 +3,7 @@ import { dispatch } from "../configureStore";
 import "../../_mockApis";
 import { matchMakingUrl } from "../servicesUrl";
 import { slice } from "./matchmaking";
+import { Alert } from 'react-native';
 
 const URL = matchMakingUrl;
 
@@ -10,7 +11,7 @@ export function getLikesDislikes(bearerToken) {
   return async () => {
     try {
       const response = await axios.get(`${URL}/likedislike`, { headers: { Authorization: `Bearer ${bearerToken}` } });
-      console.log("response likes dislikes", response.data);
+      // console.log("response likes dislikes", response.data);
       dispatch(slice.actions.getLikesDislikes(response.data));
       // const response = await mockAxios.get("/api/like");
     } catch (error) {
@@ -26,6 +27,7 @@ export function getMatches(bearerToken) {
       const response = await axios.get(`${URL}/matchhistories`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       // console.log("response matches ", response.data);
       dispatch(slice.actions.getMatchesSuccess(response.data));
+      return response.data;
     } catch (error) {
       console.log("error muncul ", error);
       dispatch(slice.actions.hasError(error));
@@ -37,7 +39,7 @@ export function getLikesByPid(bearerToken, id) {
   return async () => {
     try {
       const response = await axios.get(`${URL}/likedislike/pet/${id}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
-      console.log("response like by pid", response.data);
+      // console.log("response like by pid", response.data);
       // const response = await mockAxios.get("/api/like");
       dispatch(slice.actions.getLikesByIdSuccess(response.data));
     } catch (error) {
@@ -88,14 +90,22 @@ export function getMatchByMatchId(bearerToken, id) {
 export function sendLikeDislike(bearerToken, values) {
   return async () => {
     await axios
-      .post(`${URL}/likedislike`, {
-        ...values,
-        headers: { Authorization: `Bearer ${bearerToken}` },
-      })
-      .then(() => {
-        dispatch(getMatches());
-      })
+      .post(
+        `${URL}/likedislike`,
+        {
+          ...values,
+        },
+        {
+          headers: { Authorization: `Bearer ${bearerToken}` },
+        }
+      )
+      // .then((res) => {
+      //   console.log("response sendlikedislike", res.data);
+      //   // dispatch(getMatches(bearerToken));
+      //   return res.data;
+      // })
       .catch((err) => {
+        console.log("error muncul sendlikedislike", err);
         // showSnackBar(err.response.data.error_schema.error_message.english, "error");
         dispatch(slice.actions.hasError(err));
       });
@@ -107,7 +117,7 @@ export function deleteLike(bearerToken, id, petId) {
     try {
       const response = await axios.delete(`${URL}/likedislike/${id}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
       // handleClose();
-      dispatch(getLikesByPid(petId));
+      dispatch(getLikesByPid(bearerToken, petId));
     } catch (error) {
       // showSnackBar(error.response.data.error_schema.error_message.english, "error");
       dispatch(slice.actions.hasError(error));
@@ -115,15 +125,19 @@ export function deleteLike(bearerToken, id, petId) {
   };
 }
 
-export function deleteMatch(bearerToken, matchId, petId) {
+export function deleteMatch(bearerToken, matchId) {
+  // console.log("masuk delete match ", matchId);
   return async () => {
-    try {
-      const response = await axios.delete(`${URL}/matchhistories/${matchId}`, { headers: { Authorization: `Bearer ${bearerToken}` } });
-      // handleClose();
-      //   dispatch(getMatchesByPid(petId));
-    } catch (error) {
-      // showSnackBar(error.response.data.error_schema.error_message.english, "error");
-      dispatch(slice.actions.hasError(error));
-    }
+    await axios
+      .delete(`${URL}/matchhistories/${matchId}`, { headers: { Authorization: `Bearer ${bearerToken}` } })
+      .then((res) => {
+        dispatch(getMatches(bearerToken));
+        Alert.alert("Information", "Successfully unmatched");
+      })
+      .catch((err) => {
+        console.log("error muncul unmatch", err);
+        Alert.alert("Error", "Failed to unmatch");
+        dispatch(slice.actions.hasError(err));
+      });
   };
 }

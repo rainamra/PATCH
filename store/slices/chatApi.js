@@ -37,10 +37,13 @@ export function getMessageById(bearerToken, id) {
 export function updateMessage(bearerToken, values) {
   return async () => {
     await axios
-      .put(`${URL}/${values.msid}`, {
-        ...values,
-        headers: { Authorization: `Bearer ${bearerToken}` },
-      })
+      .put(
+        `${URL}/${values.msid}`,
+        {
+          ...values,
+        },
+        { headers: { Authorization: `Bearer ${bearerToken}` } }
+      )
       .then((res) => {
         // showSnackBar(`${res.data.error_schema.error_message.english} update member`, "info");
         // handleClose();
@@ -69,17 +72,17 @@ export function deleteMessage(bearerToken, messageId, pid1, pid2) {
 export function sendMessage(bearerToken, values) {
   return async () => {
     await axios
-      .post(`${URL}/send`, {
-        ...values,
-        headers: { Authorization: `Bearer ${bearerToken}` },
-      })
+      .post(
+        `${URL}/send`,
+        {
+          ...values,
+        },
+        { headers: { Authorization: `Bearer ${bearerToken}` } }
+      )
       .then((res) => {
-        // showSnackBar(`${res.data.error_schema.error_message.english} add member`, "info");
-        // handleClose();
-        dispatch(getMessageHistory(values.pid1, values.pid2));
+        dispatch(getMessageHistory(bearerToken, values.pid1, values.pid2));
       })
       .catch((err) => {
-        // showSnackBar(err.response.data.error_schema.error_message.english, "error");
         dispatch(slice.actions.hasError(err));
       });
   };
