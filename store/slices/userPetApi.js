@@ -41,7 +41,6 @@ export function getPetsByUserId(bearerToken, id) {
       // console.log("response pets by user id", response.data);
       // const response = await mockAxios.get("/api/user");
       dispatch(slice.actions.getPetsByIdSuccess(response.data));
-
     } catch (error) {
       console.log("error muncul ", error);
       dispatch(slice.actions.hasError(error));
@@ -76,10 +75,13 @@ export function getPetByPetId(bearerToken, id) {
 export function updateUser(bearerToken, values) {
   return async () => {
     await axios
-      .put(URL, {
-        ...values,
-        headers: { Authorization: `Bearer ${bearerToken}` },
-      })
+      .put(
+        URL,
+        {
+          ...values,
+        },
+        { headers: { Authorization: `Bearer ${bearerToken}` } }
+      )
       .then((res) => {
         // showSnackBar(`${res.data.error_schema.error_message.english} update member`, "info");
         // handleClose();
@@ -109,10 +111,13 @@ export function deleteUser(bearerToken, id) {
 export function updatePet(bearerToken, values) {
   return async () => {
     await axios
-      .put(`${URL}/pet`, {
-        ...values,
-        headers: { Authorization: `Bearer ${bearerToken}` },
-      })
+      .put(
+        `${URL}/pet`,
+        {
+          ...values,
+        },
+        { headers: { Authorization: `Bearer ${bearerToken}` } }
+      )
       .then((res) => {
         // showSnackBar(`${res.data.error_schema.error_message.english} update member`, "info");
         // handleClose();
@@ -142,10 +147,13 @@ export function deletePet(bearerToken, userId, petId) {
 export function addNewPet(bearerToken, values) {
   return async () => {
     await axios
-      .post(`${URL}/pet`, {
-        ...values,
-        headers: { Authorization: `Bearer ${bearerToken}` },
-      })
+      .post(
+        `${URL}/pet`,
+        {
+          ...values,
+        },
+        { headers: { Authorization: `Bearer ${bearerToken}` } }
+      )
       .then((res) => {
         // showSnackBar(`${res.data.error_schema.error_message.english} add member`, "info");
         // handleClose();

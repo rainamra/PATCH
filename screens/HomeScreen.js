@@ -4,7 +4,7 @@ import { ActivityIndicator, Dimensions, Image, ScrollView, StyleSheet, Text, Tex
 import Swiper from "react-native-deck-swiper";
 import Carousel from "react-native-reanimated-carousel";
 import { useDispatch, useSelector } from "../store/configureStore";
-import { getMatches, sendLikeDislike } from "../store/slices/matchmakingApi";
+import { getLikesByPid, getMatches, sendLikeDislike } from "../store/slices/matchmakingApi";
 import { getPets, getUsers } from "../store/slices/userPetApi";
 import { font } from "../styles";
 import { formatDate } from "../utils/dateUtils";
@@ -12,29 +12,30 @@ import { formatDate } from "../utils/dateUtils";
 const HomeScreen = ({ navigation }) => {
   const PAGE_WIDTH = Dimensions.get("window").width;
   const [isLoading, setIsLoading] = useState(true);
+  const [userPetData, setUserPetData] = useState(null);
 
   const { users, pets } = useSelector((state) => state.userpet);
-  const { matches } = useSelector((state) => state.matchmaking);
+  const { matches, likes } = useSelector((state) => state.matchmaking);
   const { currentPet, token, currentUser } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    const loadData = async () => {
-      // Dispatch multiple actions and wait for them to complete
-      await Promise.all([dispatch(getPets(token)), dispatch(getUsers(token)), dispatch(getMatches(token))]);
-
-      setIsLoading(false); // Set isLoading to false once all the dispatches are done
-    };
-
-    loadData();
-  }, [dispatch, currentPet]); // <-- Make sure to include dispatch as a dependency
 
   const pet = currentPet?.pid;
   const pid = pet;
 
   const user = currentUser?.uid;
   const uid = user;
+
+  useEffect(() => {
+    const loadData = async () => {
+      // Dispatch multiple actions and wait for them to complete
+      await Promise.all([dispatch(getPets(token)), dispatch(getUsers(token)), dispatch(getLikesByPid(token, pid)), dispatch(getMatches(token))]);
+
+      setIsLoading(false); // Set isLoading to false once all the dispatches are done
+    };
+
+    loadData();
+  }, [dispatch, currentPet]); // <-- Make sure to include dispatch as a dependency
 
   const addUserInfo = (data1, data2) => {
     const updatedData = data1.map((obj1) => {
@@ -51,7 +52,30 @@ const HomeScreen = ({ navigation }) => {
     return updatedData;
   };
 
-  const userPetData = addUserInfo(pets, users).filter((item) => item.uid !== uid && item.type !== "Dog");
+  const filterPetLike = (data1, data2) => {
+    const updatedData = data1.filter((obj1) => {
+      const found = data2.some((obj2) => obj2.pid1 === obj1.pid);
+      return !found;
+    });
+
+    return updatedData;
+  };
+
+  useEffect(() => {
+    // Check if likes and pets data are available
+    if (pets.length > 0 && users.length > 0) {
+      // Call the addPetInfo function with the updated data
+      setUserPetData(
+        filterPetLike(
+          addUserInfo(pets, users).filter((item) => item.uid !== uid && item.type !== "Dog"),
+          likes
+        )
+      );
+    }
+    setIsLoading(false);
+  }, [likes, pets, users, matches, currentPet]);
+
+  // console.log("userPetData: ", userPetData);
 
   const handleOnSwipedRight = (cardIndex) => {
     const values = {
@@ -60,7 +84,7 @@ const HomeScreen = ({ navigation }) => {
       action: true,
     };
 
-    console.log("values swiped right: ", values);
+    // console.log("values swiped right: ", values);
 
     dispatch(sendLikeDislike(token, values)).then(() => {
       matches.find((item) => {
@@ -86,7 +110,7 @@ const HomeScreen = ({ navigation }) => {
     <View style={[styles.container]}>
       {/* Cards goes here */}
       {
-        pets && pets?.length > 0 && !isLoading ? (
+        pets && likes && users && userPetData && !isLoading ? (
           <Swiper
             containerStyle={{ backgroundColor: "transparent", height: "100%", position: "relative", paddingBottom: 10 }}
             cardStyle={{ borderRadius: 20, height: "95%", overflow: "hidden", marginTop: -45 }}

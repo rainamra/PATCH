@@ -62,10 +62,13 @@ export function getCommentByCommentId(bearerToken, id) {
 export function updateForum(bearerToken, values) {
   return async () => {
     await axios
-      .put(URL, {
-        ...values,
-        headers: { Authorization: `Bearer ${bearerToken}` },
-      })
+      .put(
+        URL,
+        {
+          ...values,
+        },
+        { headers: { Authorization: `Bearer ${bearerToken}` } }
+      )
       .then((res) => {
         // showSnackBar(`${res.data.error_schema.error_message.english} update member`, "info");
         // handleClose();
@@ -108,13 +111,17 @@ export function deleteComment(bearerToken, forumId, commentId) {
 export function addNewForum(bearerToken, values) {
   return async () => {
     await axios
-      .post(`${URL}`, {
-        ...values,
-      })
+      .post(
+        `${URL}`,
+        {
+          ...values,
+        },
+        { headers: { Authorization: `Bearer ${bearerToken}` } }
+      )
       .then((res) => {
         // showSnackBar(`${res.data.error_schema.error_message.english} add member`, "info");
         // handleClose();
-        dispatch(getForums());
+        dispatch(getForums(bearerToken));
       })
       .catch((err) => {
         // showSnackBar(err.response.data.error_schema.error_message.english, "error");
@@ -127,10 +134,13 @@ export function addNewComment(bearerToken, values) {
   // console.log("values add comment: ", values);
   return async () => {
     await axios
-      .post(`${URL}/comment`, {
-        ...values,
-        headers: { Authorization: `Bearer ${bearerToken}` },
-      })
+      .post(
+        `${URL}/comment`,
+        {
+          ...values,
+        },
+        { headers: { Authorization: `Bearer ${bearerToken}` } }
+      )
       .then((res) => {
         // showSnackBar(`${res.data.error_schema.error_message.english} add member`, "info");
         // handleClose();
@@ -159,10 +169,13 @@ export function getReplyByCommentId(bearerToken, commentId) {
 export function addNewReply(bearerToken, values) {
   return async () => {
     await axios
-      .post(`${URL}/reply`, {
-        ...values,
-        headers: { Authorization: `Bearer ${bearerToken}` },
-      })
+      .post(
+        `${URL}/reply`,
+        {
+          ...values,
+        },
+        { headers: { Authorization: `Bearer ${bearerToken}` } }
+      )
       .then((res) => {
         // showSnackBar(`${res.data.error_schema.error_message.english} add member`, "info");
         // handleClose();
@@ -175,22 +188,49 @@ export function addNewReply(bearerToken, values) {
   };
 }
 
-export function sendLikeSave(bearerToken, values) {
+export function sendLike(bearerToken, values, callback = () => {}) {
   return async () => {
     await axios
-      .post(`${MarkedURL}/users/${values.uid}/marked-forums`, {
-        ...values,
-        headers: { Authorization: `Bearer ${bearerToken}` },
-      })
+      .post(
+        `${MarkedURL}/users/${values.uid}/marked-forums/like`,
+        {
+          ...values,
+        },
+        { headers: { Authorization: `Bearer ${bearerToken}` } }
+      )
       .then((res) => {
-        // showSnackBar(`${res.data.error_schema.error_message.english} add member`, "info");
-        // handleClose();
-        console.log("res like save: ", res);
-        // gimn cara biar bisa refresh yg di depan
-        dispatch(getForums());
+        // console.log("res like save: ", res);
+        dispatch(getForums(bearerToken));
+        dispatch(getLikedForumsByUid(bearerToken, values.uid));
+        dispatch(getSavedForumsByUid(bearerToken, values.uid));
+        callback();
       })
       .catch((err) => {
-        // showSnackBar(err.response.data.error_schema.error_message.english, "error");
+        console.log("send like error", err);
+        dispatch(slice.actions.hasError(err));
+      });
+  };
+}
+
+export function sendSave(bearerToken, values, callback = () => {}) {
+  return async () => {
+    await axios
+      .post(
+        `${MarkedURL}/users/${values.uid}/marked-forums/save`,
+        {
+          ...values,
+        },
+        { headers: { Authorization: `Bearer ${bearerToken}` } }
+      )
+      .then((res) => {
+        // console.log("res like save: ", res);
+        dispatch(getForums(bearerToken));
+        dispatch(getLikedForumsByUid(bearerToken, values.uid));
+        dispatch(getSavedForumsByUid(bearerToken, values.uid));
+        callback();
+      })
+      .catch((err) => {
+        console.log("send like error", err);
         dispatch(slice.actions.hasError(err));
       });
   };

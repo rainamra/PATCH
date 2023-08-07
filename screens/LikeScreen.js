@@ -56,8 +56,6 @@ const LikeScreen = ({ navigation }) => {
       return !found;
     });
 
-    // console.log("updatedData: ", updatedData);
-
     return updatedData;
   };
 

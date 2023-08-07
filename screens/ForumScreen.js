@@ -5,10 +5,11 @@ import { TextInput } from "react-native-gesture-handler";
 import { USER_PET_PROFILES } from "../_mockApis/payload/userPet";
 import { HeaderTitle } from "../component/HeaderComponent";
 import { useDispatch, useSelector } from "../store/configureStore";
-import { addNewComment, addNewReply, getCommentsByForumId } from "../store/slices/forumApi";
+import { addNewComment, addNewReply, getCommentsByForumId, sendSave, sendLike } from "../store/slices/forumApi";
 import { font } from "../styles";
 import { formatDayDate } from "../utils/dateUtils";
 import { getUsers } from "../store/slices/userPetApi";
+import { call } from "react-native-reanimated";
 
 const ForumScreen = ({ route, navigation }) => {
   const { data, liked, saved } = route.params;
@@ -17,10 +18,13 @@ const ForumScreen = ({ route, navigation }) => {
   const [input, setInput] = useState("");
   const [replyInput, setReplyInput] = useState("");
   const [cid, setCid] = useState(false);
+  const [like, setLike] = useState(liked);
+  const [save, setSave] = useState(saved);
+
 
   const { comments } = useSelector((state) => state.forum);
   const { users } = useSelector((state) => state.userpet);
-  const { token } = useSelector((state) => state.auth);
+  const { token, currentUser } = useSelector((state) => state.auth);
 
   // console.log("data: ", data ," comments", comments);
 
@@ -53,9 +57,9 @@ const ForumScreen = ({ route, navigation }) => {
       content: input,
       fid: data.fid,
       user: {
-        uid: "UID-20230719185653",
-        name: "Raissya Natta",
-        email: "raissya_natta@gmail.com",
+        uid: currentUser.uid,
+        name: currentUser.name,
+        email: currentUser.email,
       },
     };
 
@@ -75,15 +79,50 @@ const ForumScreen = ({ route, navigation }) => {
       fid: data.fid,
       cid: cid,
       user: {
-        uid: "UID-20230719185649",
-        name: "Vincent Alden",
-        email: "vincent_alden@gmail.com",
+        uid: currentUser.uid,
+        name: currentUser.name,
+        email: currentUser.email,
       },
     };
 
     dispatch(addNewReply(token, values));
     setCid(false);
     setReplyInput("");
+  };
+
+  const handleLikeForum = (fid) => {
+    const values = {
+      uid: currentUser.uid,
+      fid: fid,
+      // likedForum: true,
+      // savedForum: false,
+    };
+    // console.log("like: ", values);
+
+    const callback = () => {
+      // console.log("like callback");
+      setLike(!like);
+    };
+
+    dispatch(sendLike(token, values, callback));
+  };
+
+  const handleSaveForum = (fid) => {
+    const values = {
+      uid: currentUser.uid,
+      fid: fid,
+      // likedForum: false,
+      // savedForum: true,
+    };
+
+    // console.log("save: ", values);
+
+    const callback = () => {
+      // console.log("save callback");
+      setSave(!save);
+    };
+
+    dispatch(sendSave(token, values, callback));
   };
 
   useLayoutEffect(() => {
@@ -94,21 +133,57 @@ const ForumScreen = ({ route, navigation }) => {
       headerTitle: HeaderTitle,
       headerRight: (props) => (
         <View style={{ flexDirection: "row" }}>
-          {saved ? (
-            <Ionicons name="bookmark" size={24} color={font.purple.color} onPress={() => {}} style={{ marginRight: 10 }} {...props} />
+          {save ? (
+            <Ionicons
+              name="bookmark"
+              size={24}
+              color={font.purple.color}
+              onPress={() => {
+                handleSaveForum(data.fid);
+              }}
+              style={{ marginRight: 10 }}
+              {...props}
+            />
           ) : (
-            <Ionicons name="bookmark-outline" size={24} color={font.purple.color} backgroundColor={font.light.color} onPress={() => {}} style={{ marginRight: 10 }} {...props} />
+            <Ionicons
+              name="bookmark-outline"
+              size={24}
+              color={font.purple.color}
+              backgroundColor={font.light.color}
+              onPress={() => {
+                handleSaveForum(data.fid);
+              }}
+              style={{ marginRight: 10 }}
+              {...props}
+            />
           )}
-          {liked ? (
-            <Ionicons name="heart" size={24} color={font.pink.color} onPress={() => {}} {...props} />
+          {like ? (
+            <Ionicons
+              name="heart"
+              size={24}
+              color={font.pink.color}
+              onPress={() => {
+                handleLikeForum(data.fid);
+              }}
+              {...props}
+            />
           ) : (
-            <Ionicons name="heart-outline" size={24} color={font.pink.color} backgroundColor={font.light.color} onPress={() => {}} {...props} />
+            <Ionicons
+              name="heart-outline"
+              size={24}
+              color={font.pink.color}
+              backgroundColor={font.light.color}
+              onPress={() => {
+                handleLikeForum(data.fid);
+              }}
+              {...props}
+            />
           )}
         </View>
       ),
       headerLeft: (props) => <AntDesign name="leftcircle" size={25} color="#f0ae5e" onPress={navigation.goBack} {...props} />,
     });
-  }, []);
+  }, [like, save]);
 
   return (
     <View style={{ backgroundColor: "#fdfaf0", flex: 1 }}>

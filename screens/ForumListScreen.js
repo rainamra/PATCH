@@ -3,14 +3,14 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableHighlight, View } from "react-native";
 import { HeaderTitle } from "../component/HeaderComponent";
 import { useDispatch, useSelector } from "../store/configureStore";
-import { getForums, getLikedForumsByUid, getSavedForumsByUid, sendLikeSave } from "../store/slices/forumApi";
-import { getUserByUserId, getUsers } from "../store/slices/userPetApi";
+import { getForums, getLikedForumsByUid, getSavedForumsByUid, sendSave, sendLike } from "../store/slices/forumApi";
+import { getUsers } from "../store/slices/userPetApi";
 import { font } from "../styles";
 
 const ForumListScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { forums, savedForums, likedForums } = useSelector((state) => state.forum);
-  const { users, selectedUser } = useSelector((state) => state.userpet);
+  const { users } = useSelector((state) => state.userpet);
   const { token, currentUser } = useSelector((state) => state.auth);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -24,8 +24,6 @@ const ForumListScreen = ({ navigation }) => {
     setOpenSaved((prev) => !prev);
   };
 
-  // console.log("savedForums: ", openSaved);
-
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: true,
@@ -38,14 +36,14 @@ const ForumListScreen = ({ navigation }) => {
           size={26}
           color={font.purple.color}
           onPress={() => {
-            toggleSave(true);
-            dispatch(getSavedForumsByUid(uid));
+            toggleSave();
+            dispatch(getSavedForumsByUid(token, uid));
           }}
           {...props}
         />
       ),
     });
-  }, []);
+  }, [openSaved]);
 
   const user = currentUser?.uid;
   const uid = user;
@@ -54,48 +52,31 @@ const ForumListScreen = ({ navigation }) => {
     const values = {
       uid: uid,
       fid: fid,
-      likedForum: true,
-      savedForum: false,
+      // likedForum: true,
+      // savedForum: false,
     };
     console.log("like: ", values);
 
-    dispatch(sendLikeSave(token, values));
+    dispatch(sendLike(token, values));
   };
 
   const handleSaveForum = (fid) => {
     const values = {
       uid: uid,
       fid: fid,
-      likedForum: false,
-      savedForum: true,
+      // likedForum: false,
+      // savedForum: true,
     };
 
     console.log("save: ", values);
 
-    dispatch(sendLikeSave(token, values));
+    dispatch(sendSave(token, values));
   };
 
   const addUserInfo = (data1, data2) => {
     const updatedData = data1.map((obj1) => {
-      // console.log("obj1: ", obj1);
       // Check if pid1 exists in data2
-      const found = data2.find((obj2) => obj2.uid === obj1.user.uid);
-      if (found) {
-        // console.log("found1: ", found1);
-        obj1 = { ...obj1, user: { ...obj1.user, ...found } };
-      }
-
-      return obj1;
-    });
-
-    return updatedData;
-  };
-
-  const addUserInfoSaved = (data1, data2) => {
-    const updatedData = data1.map((obj1) => {
-      // console.log("obj1: ", obj1);
-      // Check if pid1 exists in data2
-      const found = data2.find((obj2) => obj2.uid === obj1.uid);
+      const found = data2.find((obj2) => obj2.uid === obj1.user?.uid || obj2.uid === obj1.uid);
       if (found) {
         // console.log("found1: ", found1);
         obj1 = { ...obj1, user: { ...obj1.user, ...found } };
@@ -108,15 +89,15 @@ const ForumListScreen = ({ navigation }) => {
   };
 
   const addForumData = (data1, data2) => {
+    // console.log("data2: ", data2);
     const updatedData = data1.map((obj1) => {
       // console.log("obj1: ", obj1);
       // Check if pid1 exists in data2
       const found = data2.find((obj2) => obj2.fid === obj1.fid);
       if (found) {
-        // console.log("found1: ", found1);
-        obj1 = { ...obj1, title: found.title };
+        // console.log("found1: ", found);
+        obj1 = { ...obj1, title: found.title, user: { ...found.user } };
       }
-
       return obj1;
     });
 
@@ -126,18 +107,21 @@ const ForumListScreen = ({ navigation }) => {
   useEffect(() => {
     const loadData = async () => {
       // Dispatch multiple actions and wait for them to complete
-      await Promise.all([dispatch(getForums(token)), dispatch(getUsers(token)), dispatch(getUserByUserId(token, uid)), dispatch(getSavedForumsByUid(token, uid)), dispatch(getLikedForumsByUid(token, uid))]);
-      const userInfoData = addUserInfo(forums, users);
-      setUserForumData(userInfoData);
-
-      const userSavedForumInfoData = addForumData(addUserInfoSaved(savedForums, users), forums);
-      setUserSavedForumData(userSavedForumInfoData);
+      await Promise.all([dispatch(getForums(token)), dispatch(getUsers(token)), dispatch(getSavedForumsByUid(token, uid)), dispatch(getLikedForumsByUid(token, uid))]);
 
       setIsLoading(false); // Set isLoading to false once all the dispatches are done
     };
 
     loadData();
   }, [dispatch]); // <-- Make sure to include dispatch as a dependency
+
+  useEffect(() => {
+    setUserForumData(addUserInfo(forums, users));
+  }, [forums, users]);
+
+  useEffect(() => {
+    setUserSavedForumData(addForumData(savedForums, forums));
+  }, [savedForums, forums, users]);
 
   return (
     <View
@@ -164,7 +148,7 @@ const ForumListScreen = ({ navigation }) => {
         <View style={{ paddingHorizontal: 20 }}>
           <TouchableHighlight onPress={() => navigation.navigate("ForumForm")}>
             <View style={styles.addBoxWrapper}>
-              <View style={styles.addBoxImageWrapper}>{selectedUser && <Image source={{ uri: `data:image/jpg;base64,${selectedUser?.profileImage}` }} resizeMode={"cover"} style={{ width: "100%", height: "100%" }}></Image>}</View>
+              <View style={styles.addBoxImageWrapper}>{currentUser && <Image source={{ uri: `data:image/jpg;base64,${currentUser?.profileImage}` }} resizeMode={"cover"} style={{ width: "100%", height: "100%" }}></Image>}</View>
               <View style={styles.addBoxTextWrapper}>
                 <Text style={styles.text1}>Start Writing!</Text>
                 <Text style={styles.text2}>Tap here</Text>
@@ -177,11 +161,11 @@ const ForumListScreen = ({ navigation }) => {
           <Image source={require("../assets/images/forum-head.png")} resizeMode={"contain"} style={{ width: "100%" }} />
         </View>
 
-        {/* <Image source={require("../assets/images/default-profile.png")} resizeMode="cover" style={{ width: "100%", height: "100%", position: "absolute", bottom: -5 }}></Image> */}
-
         {!isLoading ? (
           <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
             {userForumData &&
+              savedForums &&
+              likedForums &&
               !openSaved &&
               userForumData.map((forum, index) => {
                 const saved = savedForums?.find((savedForum) => savedForum.fid === forum.fid);
@@ -246,13 +230,15 @@ const ForumListScreen = ({ navigation }) => {
                   </TouchableHighlight>
                 );
               })}
-            {userForumData &&
+            {userSavedForumData &&
+              savedForums &&
+              likedForums &&
               openSaved &&
               userSavedForumData.map((forum, index) => {
                 const saved = savedForums?.find((savedForum) => savedForum.fid === forum.fid);
                 const liked = likedForums?.find((likedForum) => likedForum.fid === forum.fid);
 
-                // console.log("forum: ", forum.title);
+                // console.log("forum: ", forum);
                 return (
                   <TouchableHighlight key={index} onPress={() => navigation.navigate("ForumScreen", { data: forum, liked: liked, saved: saved })} style={{ marginBottom: 20 }}>
                     <View style={styles.regBoxWrapper}>

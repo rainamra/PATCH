@@ -7,7 +7,8 @@
     "data": [
       {
         "id": "fid-1",
-        "title": "The Unconventional Habits of Cats and Dogs Revealed",
+        "title": ",
+        { headers: { Authorization: `Bearer ${bearerToken}` } }",
         "body": "Discover the intriguing and sometimes quirky habits of cats and dogs that keep their owners entertained and amazed. From playful antics to surprising behavior, these furry companions continue to surprise us. Share your favorite stories and experiences with your pets!"
       },
       {
