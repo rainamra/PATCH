@@ -1,14 +1,13 @@
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, View } from "react-native";
 import { USER_PET_PROFILES } from "../_mockApis/payload/userPet";
 import BottomSheet from "../component/BottomSheet";
-import { font } from "../styles";
+import { useDispatch, useSelector } from "../store/configureStore";
 import { getPetsByUserId, getUserByUserId } from "../store/slices/userPetApi";
-import { useDispatch, useSelector, store } from "../store/configureStore";
+import { font } from "../styles";
 
 const imgDir = FileSystem.documentDirectory + "images/";
 
@@ -20,21 +19,21 @@ const ensureDirExists = async () => {
 };
 
 const ProfileScreen = ({ navigation }) => {
-  const [viewWidth, setViewWidth] = useState(false);
-  const [scrollHeight, setScrollHeight] = useState(false);
-  // const navigation = useNavigation();
-  const [editProfileModalOpen, setEditProfileModalOpen] = useState(false);
-  const [selectImageModalOpen, setSelectImageModalOpen] = useState(false);
-  const [userName, onChangeUserName] = useState(selectedUser?.name?.toString());
-  const [images, setImages] = useState([]);
-
   const dispatch = useDispatch();
   const { token, currentUser, currentPet } = useSelector((state) => state.auth);
-  const { selectedUser, petsById } = useSelector((state) => state.userpet);
+  const { petsById } = useSelector((state) => state.userpet);
 
-  const user = currentUser.uid;
-  const pet = currentPet.pid;
+  const [viewWidth, setViewWidth] = useState(false);
+  const [scrollHeight, setScrollHeight] = useState(false);
+  const [editProfileModalOpen, setEditProfileModalOpen] = useState(false);
+  const [selectImageModalOpen, setSelectImageModalOpen] = useState(false);
+  const [userName, onChangeUserName] = useState(currentUser?.name?.toString());
+  const [images, setImages] = useState([]);
+
+  const user = currentUser?.uid;
+  const pet = currentPet?.pid;
   const pid = pet;
+  const uid = user;
 
   useEffect(() => {
     dispatch(getUserByUserId(token, user));
@@ -124,7 +123,7 @@ const ProfileScreen = ({ navigation }) => {
         </View>
 
         <View style={{ width: viewWidth / 2, height: viewWidth / 2, borderRadius: 100, overflow: "hidden", marginTop: 50 }}>
-          <Image source={{ uri: `data:image/jpg;base64,${selectedUser?.profileImage}` }} resizeMode={"cover"} style={styles.image}></Image>
+          <Image source={{ uri: `data:image/jpg;base64,${currentUser?.profileImage}` }} resizeMode={"cover"} style={styles.image}></Image>
         </View>
 
         <View style={{ marginTop: 20 }}>
@@ -159,10 +158,10 @@ const ProfileScreen = ({ navigation }) => {
     >
       <View style={{ alignItems: "center" }}>
         <View style={styles.userAvatar}>
-          <Image source={{ uri: `data:image/jpg;base64,${selectedUser?.profileImage}` }} resizeMode={"cover"} style={styles.image}></Image>
+          <Image source={{ uri: `data:image/jpg;base64,${currentUser?.profileImage}` }} resizeMode={"cover"} style={styles.image}></Image>
         </View>
         <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-          <Text style={styles.userName}>{selectedUser?.name}</Text>
+          <Text style={styles.userName}>{currentUser?.name}</Text>
           <TouchableHighlight
             onPress={() => {
               handlePresentEditModal();
@@ -181,15 +180,13 @@ const ProfileScreen = ({ navigation }) => {
         scrollIndicatorInsets={{ top: 5, left: 0, bottom: 5, right: 0 }}
       >
         <View style={styles.cardWrapper}>
-          {/* {USER_PET_PROFILES.pets.length > 0 &&
-            USER_PET_PROFILES.pets.map((pet, index) => ( */}
           {petsById &&
             petsById.map((pet, index) => (
               <TouchableHighlight
                 key={index}
                 style={[styles.card, { height: (scrollHeight - 70) / 2 }]}
                 onPress={() => {
-                  navigation.navigate("EditPet", { pid: pet.pid });
+                  navigation.navigate("EditPet", { data: pet });
                 }}
               >
                 <View>

@@ -61,7 +61,7 @@ const LikeScreen = ({ navigation }) => {
 
   useEffect(() => {
     const loadData = async () => {
-      console.log("Current pet changed:", currentPet);
+      // console.log("Current pet changed:", currentPet);
       // Dispatch multiple actions and wait for them to complete
       await Promise.all([dispatch(getLikesByPid(token, pid)), dispatch(getMatches(token)), dispatch(getPets(token)), dispatch(getUsers(token))]);
     }

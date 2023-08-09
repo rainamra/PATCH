@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Alert } from "react-native";
 import "../../_mockApis";
 import { dispatch } from "../configureStore";
 import { userPetUrl } from "../servicesUrl";
@@ -109,23 +110,23 @@ export function deleteUser(bearerToken, id) {
 }
 
 export function updatePet(bearerToken, values) {
+  console.log("values", values);
   return async () => {
     await axios
       .put(
-        `${URL}/pet`,
+        `${URL}/pets/${values.pid}}`,
         {
           ...values,
         },
         { headers: { Authorization: `Bearer ${bearerToken}` } }
       )
       .then((res) => {
-        // showSnackBar(`${res.data.error_schema.error_message.english} update member`, "info");
-        // handleClose();
-        dispatch(getPetByPetId(values.pid));
-        dispatch(getPetsByUserId(values.uid));
+        dispatch(getPetsByUserId(bearerToken, values.uid));
+        dispatch(getPetByPetId(bearerToken, values.pid));
+        Alert.alert("Success", "Your pet has been updated");
       })
       .catch((err) => {
-        // showSnackBar(err.response.data.error_schema.error_message.english, "error");
+        Alert.alert("Error", err);
         dispatch(slice.actions.hasError(err));
       });
   };

@@ -26,19 +26,19 @@ export const slice = createSlice({
     loginSuccess(state, action) {
       const payload = action.payload;
       state.currentUser = { ...payload };
-      console.log("payload login", payload);
+      // console.log("payload login", payload);
       state.token = payload.jwtToken;
     },
 
     selectCurrentPet(state, action) {
       const payload = action.payload;
-      console.log("payload", payload);
+      // console.log("payload", payload);
       state.currentPet = payload;
     },
 
     getPetsSuccess(state, action) {
       const payload = action.payload;
-      console.log("payload pets", payload);
+      // console.log("payload pets", payload);
       state.pets = payload;
     },
   },

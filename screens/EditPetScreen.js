@@ -46,7 +46,7 @@ const EditPetScreen = ({ route, navigation }) => {
                   style={{ borderRadius: 10 }}
                   loop
                   width={viewWidth - 40}
-                  height={viewWidth * 0.6}
+                  height={viewWidth * 1.2}
                   data={data?.imageDataList}
                   pagingEnabled={true}
                   onProgressChange={(_, absoluteProgress) => {
@@ -126,15 +126,19 @@ const EditPetScreen = ({ route, navigation }) => {
                 <Text style={styles.subtitle}>Character</Text>
                 <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
                   <View style={styles.bubble}>
-                    <Text style={styles.bubbleText}>{data.character1}</Text>
+                    <Text style={styles.bubbleText}>{data.character1[0].toUpperCase() + data.character1.substring(1)}</Text>
                   </View>
                   <View style={styles.bubble}>
-                    <Text style={styles.bubbleText}>{data.character2}</Text>
+                    <Text style={styles.bubbleText}>{data.character2[0].toUpperCase() + data.character2.substring(1)}</Text>
                   </View>
                   <View style={styles.bubble}>
-                    <Text style={styles.bubbleText}>{data.character3}</Text>
+                    <Text style={styles.bubbleText}>{data.character3[0].toUpperCase() + data.character3.substring(1)}</Text>
                   </View>
                 </View>
+              </View>
+              <View style={{ width: viewWidth / 2 - 25, marginTop: 20 }}>
+                <Text style={styles.subtitle}>Bio</Text>
+                <Text style={styles.subtitleText}>{data?.bio}</Text>
               </View>
               <View style={{ width: viewWidth / 2 - 25, marginTop: 20 }}>
                 <Text style={styles.subtitle}>Likes</Text>
@@ -143,10 +147,6 @@ const EditPetScreen = ({ route, navigation }) => {
               <View style={{ width: viewWidth / 2 - 25, marginTop: 20 }}>
                 <Text style={styles.subtitle}>Dislikes</Text>
                 <Text style={styles.subtitleText}>{data?.dislike}</Text>
-              </View>
-              <View style={{ width: viewWidth / 2 - 25, marginTop: 20 }}>
-                <Text style={styles.subtitle}>Address</Text>
-                <Text style={styles.subtitleText}>{data?.address}</Text>
               </View>
             </View>
           </View>

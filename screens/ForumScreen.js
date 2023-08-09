@@ -2,14 +2,12 @@ import { AntDesign, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Image, Keyboard, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TouchableHighlight, TouchableWithoutFeedback, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-import { USER_PET_PROFILES } from "../_mockApis/payload/userPet";
 import { HeaderTitle } from "../component/HeaderComponent";
 import { useDispatch, useSelector } from "../store/configureStore";
-import { addNewComment, addNewReply, getCommentsByForumId, sendSave, sendLike } from "../store/slices/forumApi";
+import { addNewComment, addNewReply, getCommentsByForumId, sendLike, sendSave } from "../store/slices/forumApi";
+import { getUsers } from "../store/slices/userPetApi";
 import { font } from "../styles";
 import { formatDayDate } from "../utils/dateUtils";
-import { getUsers } from "../store/slices/userPetApi";
-import { call } from "react-native-reanimated";
 
 const ForumScreen = ({ route, navigation }) => {
   const { data, liked, saved } = route.params;
@@ -20,7 +18,6 @@ const ForumScreen = ({ route, navigation }) => {
   const [cid, setCid] = useState(false);
   const [like, setLike] = useState(liked);
   const [save, setSave] = useState(saved);
-
 
   const { comments } = useSelector((state) => state.forum);
   const { users } = useSelector((state) => state.userpet);
